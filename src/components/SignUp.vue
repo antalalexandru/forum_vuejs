@@ -96,10 +96,9 @@
 
                 if(ok) {
 
-                    let okResponseHandler = (data) => {
-                        let response = data.response;
+                    let okResponseHandler = (response) => {
                         if(response.status === 201) {
-
+                            this.$router.push('/user/confirmemail');
                         }
                     };
 

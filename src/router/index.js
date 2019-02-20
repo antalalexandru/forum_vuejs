@@ -4,9 +4,10 @@ import HelloWorld from '../components/HelloWorld.vue'
 import TopicTemplate from '../components/TopicTemplate.vue'
 import LogIn from "@/components/LogIn";
 import SignUp from "@/components/SignUp";
-import EmailConfirmation from "@/components/EmailConfirmation";
+import EmailConfirmationReminder from "@/components/EmailConfirmationReminder";
+import AccountActivation from "@/components/AccountActivation";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
     mode: 'history',
@@ -15,11 +16,6 @@ export default new Router({
             path: '/',
             name: 'skills',
             component: HelloWorld
-        },
-        {
-            path: '/bar',
-            name: 'about',
-            component: TopicTemplate
         },
         // ---------------------------------------
         // Log in component
@@ -38,13 +34,17 @@ export default new Router({
             component: SignUp
         },
         // ---------------------------------------
-        // Email confirmation help page (resend email, etc)
+        // Email confirmation reminder
         // ---------------------------------------
         {
-            path: '/user/confirmemail',
-            name: 'confirmare_email',
-            component: EmailConfirmation
+            path: '/user/email_confirmation_reminder',
+            name: 'email_confirmation_reminder',
+            component: EmailConfirmationReminder
+        },
+        {
+            path: '/user/:user_id/activate_account/:activation_token',
+            name: 'account_activation',
+            component: AccountActivation
         }
-
     ]
 })

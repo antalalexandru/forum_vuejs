@@ -31,7 +31,7 @@
                 </ul>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-if="loggedIn">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Bun venit</a>
+                        <a class="nav-link" href="#">{{ loggedIn.username }}</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-else>
@@ -48,12 +48,19 @@
 </template>
 
 <script>
+    import {getSelfUserInformation} from "@/service/memberService";
+
     export default {
         name: "Header",
         data () {
             return {
-                loggedIn: localStorage.userId
+                loggedIn: localStorage.auhentication_token
             }
+        },
+        created() {
+            getSelfUserInformation((data) => {
+                this.loggedIn = data;
+            });
         }
     }
 

@@ -12,43 +12,15 @@ export default function checkLogin(username, password, onsuccess, onerror) {
             "Content-Type": 'application/x-www-form-urlencoded'
         }
     })
-        .then(response => {
-            /* eslint-disable no-console */
-            console.log(response);
-            /* eslint-enable no-console */
-            onsuccess(response);
-        })
-        .catch((err) => {
-            /* eslint-disable no-console */
-            console.log(err);
-            /* eslint-enable no-console */
-
-            onerror(err);
-        });
+    .then(response => {
+        onsuccess(response);
+    })
+    .catch((err) => {
+        onerror(err);
+    });
 }
 
 export const checkSignup = async (username, password, email, onsuccess, onerror) => {
-   /*axios.post("http://localhost:8085/user", {
-
-        username: username,
-        password: password,
-        email: email
-
-        }, {
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        }
-        }).then(response => {
-            console.log(response);
-            onsuccess(response);
-        })
-        .catch((err) => {
-            console.log(err);
-            onerror(err);
-        });
-    */
-
     axios.request({
         url: 'http://localhost:8082/user',
         method: 'post',
@@ -62,11 +34,38 @@ export const checkSignup = async (username, password, email, onsuccess, onerror)
             "Access-Control-Allow-Origin": "*"
         }
     })
-        .then(response => {
+    .then(response => {
+        onsuccess(response);
+    })
+    .catch((err) => {
+        onerror(err);
+    });
+};
+
+export const activateUserAccount = async(userId, activationToken, onsuccess, onerror) => {
+    axios.get('http://localhost:8082/user/activate_account/' + userId + '/token/' + activationToken)
+        .then((response) => {
             onsuccess(response);
         })
-        .catch((err) => {
-            onerror(err);
+        .catch((error) => {
+            onerror(error);
         });
+};
 
+export const getSelfUserInformation = async(onsuccess) => {
+    if(localStorage.auhentication_token) {
+        axios.request({
+            url: 'http://localhost:8082/user/me',
+            method: 'get',
+            headers: {
+                "Authorization": "Bearer " + localStorage.auhentication_token,
+            }
+        })
+            .then(response => {
+                onsuccess(response.data);
+            })
+            .catch((err) => {
+                // TODO;
+            });
+    }
 };

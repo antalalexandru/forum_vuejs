@@ -1,6 +1,11 @@
 <template>
     <div class="content">
         <h2 class="display-4">Autentificare</h2>
+
+        <div class="alert alert-danger" role="alert" v-if="bad_credentials">
+            Numele de utilizator sau parola sunt greşite
+        </div>
+
         <div class="form-group">
             <label for="exampleInputEmail1">Nume de utilizator</label>
             <input type="text" class="form-control" id="exampleInputEmail1" v-model="input.username">
@@ -14,7 +19,8 @@
 </template>
 
 <script>
-    import checkLogin from '../service/memberService';
+
+    import checkLogin from "@/service/memberService";
 
     export default {
         name: "LogIn",
@@ -23,15 +29,28 @@
                 input: {
                     username: "",
                     password: ""
-                }
+                },
+                bad_credentials: false,
             }
         },
         methods: {
             login() {
-                /* eslint-disable no-console */
-                checkLogin(this.input.username, this.input.password);
-                /* eslint-enable no-console */
 
+                this.bad_credentials = false;
+
+                let onsuccess = (response) => {
+                    localStorage.auhentication_token = response.data.access_token;
+                    this.$router.push('/');
+                };
+
+                let onerror = (data) => {
+                    let request = data.request;
+                    if(request.status === 400 && JSON.parse(request.response).error_description === "Bad credentials") {
+                        this.bad_credentials = true;
+                    }
+                };
+
+                checkLogin(this.input.username, this.input.password, onsuccess, onerror);
             }
         }
     }
