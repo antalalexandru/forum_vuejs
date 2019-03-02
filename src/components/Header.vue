@@ -29,11 +29,17 @@
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav form-inline my-2 my-lg-0" v-if="loggedIn">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{ loggedIn.username }}</a>
-                    </li>
-                </ul>
+
+                <div class="navbar-nav btn-group" v-if="loggedIn">
+                    <a class="nav-link dropdown-toggle" href="#" id="userNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ loggedIn.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userNavbarDropdown">
+                        <router-link class="dropdown-item" :to="{ name: 'user_profile', params: { user_id: loggedIn.id } }">Profilul meu</router-link>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Delogare</a>
+                    </div>
+                </div>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-else>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/user/login"><i class="fas fa-sign-in-alt"></i> Autentificare</router-link>

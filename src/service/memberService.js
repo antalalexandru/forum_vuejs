@@ -69,3 +69,15 @@ export const getSelfUserInformation = async(onsuccess) => {
             });
     }
 };
+
+export const getUserById = async(user_id, onsuccess) => {
+    if(localStorage.auhentication_token) {
+        axios.get('http://localhost:8082/user/' + user_id)
+            .then(response => {
+                onsuccess(response.data);
+            })
+            .catch((err) => {
+                // TODO;
+            });
+    }
+};

@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '../components/HelloWorld.vue'
-import TopicTemplate from '../components/TopicTemplate.vue'
 import LogIn from "@/components/LogIn";
 import SignUp from "@/components/SignUp";
 import EmailConfirmationReminder from "@/components/EmailConfirmationReminder";
 import AccountActivation from "@/components/AccountActivation";
+import UserProfile from "@/components/UserProfile";
+import Categories from "@/components/Categories";
 
 Vue.use(Router);
 
@@ -14,8 +14,8 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'skills',
-            component: HelloWorld
+            name: 'categories',
+            component: Categories
         },
         // ---------------------------------------
         // Log in component
@@ -41,10 +41,17 @@ export default new Router({
             name: 'email_confirmation_reminder',
             component: EmailConfirmationReminder
         },
+
         {
             path: '/user/:user_id/activate_account/:activation_token',
             name: 'account_activation',
             component: AccountActivation
+        },
+
+        {
+            path: '/user/:user_id',
+            name: 'user_profile',
+            component: UserProfile
         }
     ]
 })
