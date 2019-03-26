@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+export const userLoggedIn = localStorage.auhentication_token != null;
+
 export default function checkLogin(username, password, onsuccess, onerror) {
     let params = new URLSearchParams();
     params.append('grant_type','password');

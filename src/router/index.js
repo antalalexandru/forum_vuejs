@@ -6,6 +6,7 @@ import EmailConfirmationReminder from "@/components/EmailConfirmationReminder";
 import AccountActivation from "@/components/AccountActivation";
 import UserProfile from "@/components/UserProfile";
 import Categories from "@/components/Categories";
+import CategoryDetails from "../components/CategoryDetails";
 
 Vue.use(Router);
 
@@ -52,6 +53,14 @@ export default new Router({
             path: '/user/:user_id',
             name: 'user_profile',
             component: UserProfile
-        }
+        },
+
+        {
+            path: '/category/:category_id',
+            name: 'category_details',
+            component: CategoryDetails
+        },
+
+
     ]
 })

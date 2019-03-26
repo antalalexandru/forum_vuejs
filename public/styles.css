@@ -8,3 +8,17 @@
 body {
     font-family: "Google Sans", sans-serif;
 }
+
+@media (min-width: 1200px) {
+    .container{
+        max-width: 1300px;
+    }
+}
+
+a {
+    color: #3d6594;
+}
+
+a:hover {
+    text-decoration: none;
+}
