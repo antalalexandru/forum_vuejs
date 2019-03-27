@@ -3,7 +3,7 @@
         <center><h1 style="padding: 70px 0; font-family: 'Raleway'; font-weight: 200; font-size: 60px;">Category #{{this.category_id}}</h1></center>
 
         <div style="text-align: right" v-if="this.userLoggedIn">
-            <button type="button" class="btn btn-light"><i class="fas fa-plus-circle"></i> Add new topic</button>
+            <router-link :to="{ name: 'add_new_topic', params: { category_id: this.category_id } }"><button type="button" class="btn btn-light"><i class="fas fa-plus-circle"></i> Add new topic</button></router-link>
         </div>
 
     </div>

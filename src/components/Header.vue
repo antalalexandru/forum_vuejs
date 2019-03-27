@@ -42,10 +42,10 @@
                 </div>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-else>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/user/login"><i class="fas fa-sign-in-alt"></i> Autentificare</router-link>
+                        <router-link class="nav-link" to="/user/login"><i class="fas fa-sign-in-alt"></i> Sign in</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/user/signup"><i class="fas fa-user-plus"></i> Creează cont</router-link>
+                        <router-link class="nav-link" to="/user/signup"><i class="fas fa-user-plus"></i> Sign up</router-link>
                     </li>
                 </ul>
             </div>

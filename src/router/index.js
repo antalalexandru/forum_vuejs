@@ -6,6 +6,7 @@ import EmailConfirmationReminder from "@/components/EmailConfirmationReminder";
 import AccountActivation from "@/components/AccountActivation";
 import UserProfile from "@/components/UserProfile";
 import Categories from "@/components/Categories";
+import AddNewTopic from "@/components/AddNewTopic";
 import CategoryDetails from "../components/CategoryDetails";
 
 Vue.use(Router);
@@ -61,6 +62,10 @@ export default new Router({
             component: CategoryDetails
         },
 
-
+        {
+            path: '/topic/add_new_topic/:category_id',
+            name: 'add_new_topic',
+            component: AddNewTopic
+        },
     ]
 })

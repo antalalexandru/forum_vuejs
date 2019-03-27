@@ -16,12 +16,12 @@
         </div>
       </td>
       <td style="width: 11%; text-align: center; vertical-align: middle">
-        <span style='font-weight: 600'>{{category.numberOfPosts}}</span> posts</td>
+        <span style='font-weight: 600'>{{category.numberOfTopics}}</span> topics<br><b>{{category.numberOfPosts}}</b> posts</td>
       <td style="width: 25%; vertical-align: middle">
-        <div v-if="category.lastPost">
-          {{category.lastPost.topic.title}} <br>
-          By {{category.lastPost.author.username}} <br>
-          {{formatted(category.lastPost.timestamp)}}
+        <div v-if="category.lastPostId">
+          <a href="#">{{category.lastPostTopicTitle}}</a> <br>
+          By {{category.lastPostUserName}} <br>
+          {{formatted(category.lastPostTimeStamp)}}
         </div>
         <div v-else>
           <em>No last post information</em>
@@ -67,6 +67,7 @@ export default {
   created() {
     let onSuccessCategories = (response) => {
       this.categoriesList = response.data;
+      console.log(this.categoriesList);
     };
     let onErrorCategories = (data) => {
 

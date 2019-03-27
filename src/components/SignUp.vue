@@ -1,7 +1,7 @@
 <template>
     <div class="content">
 
-        <h2 class="display-4">Înregistrare</h2>
+        <h1 style="padding: 70px 0; font-family: 'Raleway'; text-align: center; font-weight: 200; font-size: 60px;">Înregistrare</h1>
         <div class="form-group">
             <label for="usernameInput">Nume de utilizator</label>
             <input type="text" class="form-control" v-bind:class="{ 'is-invalid': invalidUsername }" id="usernameInput" v-model="input.username">
