@@ -14,6 +14,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Link</a>
                     </li>
+                    <li class="nav-item">
+                    <router-link class="nav-link" :to="{ name: 'issues' }">Issues</router-link>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Dropdown
@@ -30,14 +33,14 @@
                     </li>
                 </ul>
 
-                <div class="navbar-nav btn-group" v-if="loggedIn">
+                <div class="navbar-nav btn-group" v-if="this.loggedIn">
                     <a class="nav-link dropdown-toggle" href="#" id="userNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {{ loggedIn.username }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userNavbarDropdown">
                         <router-link class="dropdown-item" :to="{ name: 'user_profile', params: { user_id: loggedIn.id } }">Profilul meu</router-link>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Delogare</a>
+                        <a class="dropdown-item" href="#" v-on:click="logout"><i class="fas fa-sign-out-alt"></i> Delogare</a>
                     </div>
                 </div>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-else>
@@ -55,19 +58,27 @@
 
 <script>
     import {getSelfUserInformation} from "@/service/memberService";
-
     export default {
         name: "Header",
+        beforeCreate() {
+
+        },
         data () {
             return {
-                loggedIn: localStorage.auhentication_token
+                loggedIn: localStorage.authentication_token != null
             }
         },
         created() {
             getSelfUserInformation((data) => {
                 this.loggedIn = data;
             });
-        }
+        },
+        methods: {
+            logout: () => {
+                localStorage.removeItem('authentication_token');
+                window.location.reload();
+            }
+        },
     }
 
 </script>

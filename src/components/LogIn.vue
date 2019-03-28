@@ -39,7 +39,7 @@
                 this.bad_credentials = false;
 
                 let onsuccess = (response) => {
-                    localStorage.auhentication_token = response.data.access_token;
+                    localStorage.authentication_token = response.data.access_token;
                     this.$router.push('/');
                 };
 

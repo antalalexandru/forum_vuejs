@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const userLoggedIn = localStorage.auhentication_token != null;
+export const userLoggedIn = localStorage.authentication_token != null;
 
 export default function checkLogin(username, password, onsuccess, onerror) {
     let params = new URLSearchParams();
@@ -55,25 +55,27 @@ export const activateUserAccount = async(userId, activationToken, onsuccess, one
 };
 
 export const getSelfUserInformation = async(onsuccess) => {
-    if(localStorage.auhentication_token) {
+    if(localStorage.authentication_token) {
         axios.request({
-            url: 'http://localhost:8082/user/me',
+            url: 'http://127.0.0.1:8082/user/me',
             method: 'get',
             headers: {
-                "Authorization": "Bearer " + localStorage.auhentication_token,
+                "Authorization": "Bearer " + localStorage.authentication_token
             }
         })
             .then(response => {
                 onsuccess(response.data);
             })
             .catch((err) => {
+                console.log(" !! ERR ", err);
+                localStorage.auhentication_token = null;
                 // TODO;
             });
     }
 };
 
 export const getUserById = async(user_id, onsuccess) => {
-    if(localStorage.auhentication_token) {
+    if(localStorage.authentication_token) {
         axios.get('http://localhost:8082/user/' + user_id)
             .then(response => {
                 onsuccess(response.data);
