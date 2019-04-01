@@ -2,6 +2,14 @@
     <div>
         <h1 style="padding: 70px 0; font-family: 'Raleway'; font-weight: 200; font-size: 60px; text-align: center">Issues</h1>
 
+        <div style="text-align: right; margin-bottom: 15px;" v-if="userLoggedIn">
+            <router-link class="nav-link" to="/issues/add">
+                <button type="button" class="btn btn-light">
+                    <i class="fas fa-plus-circle"></i> Add new issue
+                </button>
+            </router-link>
+        </div>
+
         <table class="table">
             <thead class="thead-light">
             <tr>
@@ -17,9 +25,9 @@
             <tbody>
             <tr v-for="issue in issuesList" :key="issue.id">
                 <th scope="row">{{issue.id}}</th>
-                <td>{{issue.title}}</td>
-                <td>{{formatted(issue.timestamp)}}</td>
-                <td>{{issue.userName}}</td>1
+                <td><router-link :to="{ name: 'issue_details', params: { issue_id: issue.id } }">{{issue.title}}</router-link></td>
+                <td>{{formatTimestamp(issue.timestamp)}}</td>
+                <td>{{issue.userName}}</td>
                 <td style="text-align: center"><strong><i class="fas fa-exclamation-circle" v-if="issue.severity === 5"></i> {{issue.severity}}</strong></td>
                 <td><span v-bind:class="['badge', statusBadge(issue.status)]">{{issue.status}}</span></td>
                 <td style="text-align: center"><i class="far fa-comment"></i> {{issue.replies}}</td>
@@ -32,35 +40,27 @@
 
 <script>
     import { getIssues } from "@/service/issuesService";
+    import { userLoggedIn } from "@/service/memberService";
+    import {formatTimestamp} from "@/service/utils";
 
     export default {
         name: "Issues",
         data() {
             return {
-                issuesList: []
+                issuesList: [],
+                userLoggedIn: userLoggedIn
             }
         },
 
         methods: {
-            formatted: (UNIX_timestamp) => {
-                var a = new Date(UNIX_timestamp * 1000);
-                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                var year = a.getFullYear();
-                var month = months[a.getMonth()];
-                var date = a.getDate();
-                var hour = a.getHours();
-                var min = a.getMinutes();
-                var time = date + ' ' + month + ' ' + year + ', ' + hour + ':' + min;
-                return time;
-            },
-
             statusBadge: (status) => {
                 switch (status) {
                     case 'PENDING': return 'badge-light';
                     case 'FIXED': return 'badge-success';
                     case 'CONFIRMED': return 'badge-danger';
                 }
-            }
+            },
+            formatTimestamp: formatTimestamp
         },
 
         created() {

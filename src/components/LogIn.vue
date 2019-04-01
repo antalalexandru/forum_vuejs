@@ -19,7 +19,6 @@
 </template>
 
 <script>
-
     import checkLogin from "@/service/memberService";
 
     export default {
@@ -40,7 +39,8 @@
 
                 let onsuccess = (response) => {
                     localStorage.authentication_token = response.data.access_token;
-                    this.$router.push('/');
+                    // Force page re-render
+                    document.location.href = '/';
                 };
 
                 let onerror = (data) => {

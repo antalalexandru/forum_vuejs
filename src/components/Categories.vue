@@ -7,9 +7,7 @@
             <tbody>
 
             <tr v-for="category in categoriesList" :key="category.id">
-                <td style="width: 50px; vertical-align: middle; text-align: center"><i class="far fa-comments"
-                                                                                       aria-hidden="true"
-                                                                                       style='font-size: 25px; color: #888;'></i>
+                <td style="width: 50px; vertical-align: middle; text-align: center"><i class="far fa-comments" aria-hidden="true" style='font-size: 25px; color: #888;'></i>
                 </td>
                 <td style="vertical-align: middle">
                     <div style="font-size: 25px; line-height: 2.0">

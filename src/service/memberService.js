@@ -68,7 +68,6 @@ export const getSelfUserInformation = async(onsuccess) => {
             })
             .catch((err) => {
                 console.log(" !! ERR ", err);
-                localStorage.auhentication_token = null;
                 // TODO;
             });
     }

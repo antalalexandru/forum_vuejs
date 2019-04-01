@@ -15,7 +15,6 @@
             <i class="far fa-surprise bigicon"></i>
             <p style="text-align: center; font-size: 19px;">Acest user n-are nicio activitate. <a href="#">BANEAZĂ-L!</a> </p>
         </div>
-
     </div>
 </template>
 
