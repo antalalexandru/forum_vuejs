@@ -20,13 +20,13 @@
                     </div>
                 </td>
                 <td style="width: 11%; text-align: center; vertical-align: middle">
-                    <span style='font-weight: 600'>{{category.numberOfPosts}}</span> posts
+                    <span style='font-weight: 600'>{{category.numberOfPosts + category.numberOfTopics}}</span> posts
                 </td>
                 <td style="width: 25%; vertical-align: middle">
-                    <div v-if="category.lastPost">
-                        {{category.lastPost.topic.title}} <br>
-                        By {{category.lastPost.author.username}} <br>
-                        {{formatted(category.lastPost.timestamp)}}
+                    <div v-if="category.lastPostId">
+                        {{category.lastPostTopicTitle}} <br>
+                        By {{category.lastPostUserName}} <br>
+                        {{formatTimestamp(category.lastPostTimeStamp)}}
                     </div>
                     <div v-else>
                         <em>No last post information</em>
@@ -42,6 +42,7 @@
 
 <script>
     import {getCategories} from "@/service/categoriesService";
+    import {formatTimestamp} from "@/service/utils";
 
     export default {
         name: 'Categories',
@@ -56,25 +57,15 @@
         },
 
         methods: {
-            formatted: (UNIX_timestamp) => {
-                var a = new Date(UNIX_timestamp * 1000);
-                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                var year = a.getFullYear();
-                var month = months[a.getMonth()];
-                var date = a.getDate();
-                var hour = a.getHours();
-                var min = a.getMinutes();
-                var time = date + ' ' + month + ' ' + year + ', ' + hour + ':' + min;
-                return time;
-            }
+            formatTimestamp: formatTimestamp
         },
 
         created() {
             let onSuccessCategories = (response) => {
                 this.categoriesList = response.data;
+                console.log(response.data);
             };
             let onErrorCategories = (data) => {
-
             };
             getCategories(onSuccessCategories, onErrorCategories);
         }

@@ -18,7 +18,8 @@
     "vue-notification": "^1.3.16",
     "vue-recaptcha": "^1.1.1",
     "vue-router": "^3.0.2",
-    "vue-swal": "^1.0.0"
+    "vue-swal": "^1.0.0",
+    "vue-top-progress": "^0.7.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",

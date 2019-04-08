@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import checkLogin from "@/service/memberService";
+    import {checkLogin} from "@/service/memberService";
 
     export default {
         name: "LogIn",

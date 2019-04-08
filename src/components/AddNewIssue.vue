@@ -63,7 +63,7 @@
                         title: 'Success',
                         text: "Issue added succesfully!",
                         type: 'success'
-                    }).then((res) => {
+                    }).then(() => {
                         this.$router.push('/issue/' + response.data.id);
                     });
                 };

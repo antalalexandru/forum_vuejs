@@ -11,6 +11,7 @@ import Issues from "@/components/Issues";
 import CategoryDetails from "../components/CategoryDetails";
 import AddNewIssue from "@/components/AddNewIssue";
 import IssueDetails from "@/components/IssueDetails";
+import AddNewTopic from "@/components/AddNewTopic";
 
 Vue.use(Router);
 
@@ -64,6 +65,14 @@ export default new Router({
             name: 'category_details',
             component: CategoryDetails
         },
+
+        {
+            path: '/category/:category_id/add',
+            name: 'add_new_topic',
+            component: AddNewTopic
+        },
+
+
 
         {
             path: '/issues',

@@ -10,13 +10,13 @@ export const getCategories = async(onsuccess, onerror) => {
         });
 };
 
-export const getCategory = async(/*caegory_id, onsuccess, onerror*/) => {
-    /*axios.get('http://localhost:8082/category')
+export const getCategory = async(caegory_id, onsuccess, onerror) => {
+    axios.get('http://localhost:8082/category/' + caegory_id)
         .then((response) => {
             onsuccess(response);
         })
         .catch((error) => {
             onerror(error);
-        });*/
+        });
 };
 
