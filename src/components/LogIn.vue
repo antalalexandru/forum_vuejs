@@ -39,6 +39,9 @@
 
                 let onsuccess = (response) => {
                     localStorage.authentication_token = response.data.access_token;
+                    localStorage.refresh_token = response.data.refresh_token;
+                    localStorage.role = response.data.roles;
+
                     // Force page re-render
                     document.location.href = '/';
                 };

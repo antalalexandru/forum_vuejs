@@ -76,6 +76,8 @@
         methods: {
             logout: () => {
                 localStorage.removeItem('authentication_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('role');
                 window.location.reload();
             }
         },

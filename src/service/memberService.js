@@ -1,6 +1,14 @@
 import axios from 'axios';
 
+function hasAnyRole(roles) {
+    return roles.some(role => ('ROLE_' + role) === localStorage.role);
+}
+
 export const userLoggedIn = localStorage.authentication_token != null;
+
+export const userPermissions = {
+    canCloseTopic: hasAnyRole(['ADMIN', 'MODERATOR'])
+};
 
 export function checkLogin(username, password, onsuccess, onerror) {
     let params = new URLSearchParams();
@@ -84,3 +92,4 @@ export const getUserById = async(user_id, onsuccess) => {
             });
     }
 };
+

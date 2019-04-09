@@ -25,15 +25,32 @@
                 <a class="dropdown-item" href="#">Something else here</a>
             </div> -->
 
-            <button type="button" class="btn btn-link" style="margin-right: 10px; color: #aa0000"><i class="fas fa-times-circle"></i> Delete topic</button>
+            <div class="d-inline-block" v-if="this.userPermissions.canCloseTopic">
+                <button type="button" class="btn btn-link" style="margin-right: 10px; color: #555" v-on:click="closeTopic" v-if="!topic_details.closed"><i class="fas fa-lock"></i> Close topic</button>
+                <button type="button" class="btn btn-link" style="margin-right: 10px; color: #555" v-on:click="openTopic" v-else><i class="fas fa-lock-open"></i> Open topic</button>
 
-            <button type="button" class="btn btn-link" style="margin-right: 10px; color: #555"><i class="fas fa-lock"></i> Close topic</button>
+            </div>
 
-            <button type="button" class="btn btn-secondary">New reply</button>
+            <div class="d-inline-block">
+                <button class="btn btn-secondary" type="button" v-on:click="scrollToBottom" v-if="!topic_details.closed" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    New reply
+                </button>
+                <button type="button" class="btn btn-danger" disabled v-else>
+                    This topic is closed
+                </button>
+
+            </div>
+
+            <!-- <button type="button" class="btn btn-link" style="margin-right: 10px; color: #aa0000" v-if="this.userPermissions.canCloseTopic"><i class="fas fa-times-circle"></i> Delete topic</button>
+
+            <button type="button" class="btn btn-link" style="margin-right: 10px; color: #555" v-on:click="closeTopic"><i class="fas fa-lock"></i> Close topic</button>
+
+            <button type="button" class="btn btn-secondary">New reply</button> -->
         </div>
 
         <table class="table table-striped" style="width: 100%">
-            <transition-group name="list" tag="tbody">
+            <!-- <transition-group name="list" tag="tbody"> -->
+            <tbody>
                 <tr v-for="post in posts" :key="post.id" style="width: 100%">
                     <td style="width: 250px; text-align: center; vertical-align: top">
                         <div style="font-size: 18px">{{post.author.username}}</div>
@@ -62,13 +79,18 @@
 
                     </td>
                 </tr>
-            </transition-group>
+            </tbody>
+            <!-- </transition-group> -->
 
         </table>
 
-        <div style="text-align: right; margin: 10px 0"><button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            New reply
-        </button>
+        <div style="text-align: right; margin: 10px 0">
+            <button class="btn btn-secondary" type="button" v-if="!topic_details.closed" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                New reply
+            </button>
+            <button type="button" class="btn btn-danger" disabled v-else>
+                This topic is closed
+            </button>
         </div>
 
         <div class="collapse" id="collapseExample">
@@ -84,13 +106,16 @@
     import {
         getTopicById,
         getPostsByTopicId,
-        addPostToTopic
+        addPostToTopic,
+        setTopicClosedStatus
     } from "../service/topicsService";
 
     import {
         formatTimestamp,
-        getUserGroupFormatted
+        getUserGroupFormatted,
     } from "@/service/utils";
+
+    import { userPermissions } from "@/service/memberService";
 
     import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
@@ -107,7 +132,8 @@
                 editorConfig: {},
                 input: {
                     content: '',
-                }
+                },
+                userPermissions: userPermissions
             }
         },
 
@@ -124,6 +150,30 @@
                     console.log(err);
                 };
                 addPostToTopic(this.$route.params.topic_id, this.input.content, onSuccessAddPost, onFailureAddPost);
+            },
+
+            closeTopic() {
+                setTopicClosedStatus(this.$route.params.topic_id, true, (response, err) => {
+                    if(err == null) {
+                        this.topic_details = response.data;
+                    } else {
+                        console.log("err");
+                    }
+                });
+            },
+
+            openTopic() {
+                setTopicClosedStatus(this.$route.params.topic_id, false, (response, err) => {
+                    if(err == null) {
+                        this.topic_details = response.data;
+                    } else {
+                        console.log("err");
+                    }
+                })
+            },
+
+            scrollToBottom() {
+                setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 500);
             }
 
         },
