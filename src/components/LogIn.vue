@@ -19,8 +19,7 @@
 </template>
 
 <script>
-
-    import checkLogin from "@/service/memberService";
+    import {checkLogin} from "@/service/memberService";
 
     export default {
         name: "LogIn",
@@ -39,8 +38,9 @@
                 this.bad_credentials = false;
 
                 let onsuccess = (response) => {
-                    localStorage.auhentication_token = response.data.access_token;
-                    this.$router.push('/');
+                    localStorage.authentication_token = response.data.access_token;
+                    // Force page re-render
+                    document.location.href = '/';
                 };
 
                 let onerror = (data) => {

@@ -1,60 +1,61 @@
 <template>
-    <div class="content">
-        <center><h1 style="padding: 70px 0; font-family: 'Raleway'; font-weight: 200; font-size: 60px;">Add new topic</h1></center>
+    <div>
+
+        <h1 style="padding: 70px 0; font-family: 'Raleway'; font-weight: 200; font-size: 60px; text-align: center">Add new topic</h1>
+
 
         <div class="form-group">
-            <label for="emailInput">Topic title</label>
-            <input type="text" class="form-control" id="emailInput" v-model="input.title">
+            <label for="usernameInput">Title</label>
+            <input type="text" class="form-control" id="usernameInput" v-model="input.title">
         </div>
 
-        <label for="editor"></label><textarea name="content" id="editor" row="10"></textarea>
 
-        <center><button type="submit" class="btn btn-primary">Add topic</button></center>
+        <div class="form-group">
+            <ckeditor class="form-control" id="details" :editor="editor" v-model="input.content" :config="editorConfig"></ckeditor>
+        </div>
 
-
-    </div>
+        <div style="text-align: right; margin-top: 15px;">
+            <button type="button" class="btn btn-secondary" v-on:click="addTopic">
+                <i class="fas fa-plus-circle"></i> Add new topic
+            </button>
+        </div></div>
 </template>
 
 <script>
-    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+    import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+    import {
+        addNewTopic
+    } from "@/service/topicsService";
 
     export default {
         name: "AddNewTopic",
+
         data() {
             return {
+                editor: ClassicEditor,
+                editorConfig: {},
                 input: {
-                    title: "",
-                    content: "",
-                },
+                    title: '',
+                    content: ''
+                }
             }
         },
-        mounted() {
-            ClassicEditor
-                .create( document.getElementById( 'editor'), {
-                    toolbar: [ 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', 'blockQuote', 'imageUpload' ],
 
-            } )
-                .catch( error => {
-                    console.error( error );
-                } );
+        methods: {
+            addTopic() {
+
+                addNewTopic({
+                    title: this.input.title,
+                    content: this.input.content,
+                    categoryId: this.$route.params.category_id
+                });
+
+            }
         }
     }
 </script>
 
-<style>
-    .content {
-        margin: 0 auto;
-        max-width: 1000px;
-    }
+<style scoped>
 
-    button {
-        margin: 20px 0;
-        min-width: 200px;
-        background: #617880;
-        border-color: #617880;
-    }
-
-    .ck-editor__editable  {
-        min-height: 300px;
-    }
 </style>
