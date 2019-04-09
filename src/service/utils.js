@@ -16,3 +16,7 @@ export const statusBadge = (status) => {
         case 'CONFIRMED': return 'badge-danger';
     }
 };
+
+export const getUserGroupFormatted = (group) => {
+    return group.format_prefix + group.name + group.format_suffix;
+};
