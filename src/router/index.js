@@ -12,6 +12,7 @@ import CategoryDetails from "../components/CategoryDetails";
 import AddNewIssue from "@/components/AddNewIssue";
 import IssueDetails from "@/components/IssueDetails";
 import AddNewTopic from "@/components/AddNewTopic";
+import ViewTopic from "@/components/ViewTopic";
 
 Vue.use(Router);
 
@@ -90,6 +91,12 @@ export default new Router({
             path: '/issue/:issue_id',
             name: 'issue_details',
             component: IssueDetails
+        },
+
+        {
+            path: '/topic/:topic_id',
+            name: 'topic_details',
+            component: ViewTopic
         }
 
     ]

@@ -28,3 +28,9 @@ export const getTopicsByCategoryId = async (categoryId, onSuccess, onFailure) =>
         .then(response => {onSuccess(response);})
         .catch(err => onFailure(err));
 };
+
+export const getTopicById = async (topicId, onSuccess, onFailure) => {
+    axios.get('http://localhost:8082/topic/' + topicId)
+        .then(response => onSuccess(response))
+        .catch(err => onFailure(err));
+};

@@ -5,6 +5,10 @@
     src: url("./fonts/GoogleSans-Regular.ttf") format('truetype');
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: "Google Sans", sans-serif;
 }
@@ -22,3 +26,4 @@ a {
 a:hover {
     text-decoration: none;
 }
+

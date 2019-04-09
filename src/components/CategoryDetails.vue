@@ -12,7 +12,11 @@
             <tbody>
                 <tr v-for="topic in this.topics" :key="topic.id">
                     <td>
-                        <div>{{topic.title}}</div>
+                        <div>
+                            <router-link :to="{ name: 'topic_details', params: { topic_id: topic.id } }">
+                                {{topic.title}}
+                            </router-link>
+                        </div>
                         <div style="color: #888;">Started by {{topic.firstPostUserName}}, {{formatTimestamp(topic.firstPostTimeStamp)}}</div>
                     </td>
                     <td style="vertical-align: middle">
