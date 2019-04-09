@@ -6,6 +6,10 @@ export const formatTimestamp = (UNIX_timestamp) => {
     let date = a.getDate();
     let hour = a.getHours();
     let min = a.getMinutes();
+
+    let nowTimeStamp = Date.now() / 1000;
+
+
     return date + ' ' + month + ' ' + year + ', ' + hour + ':' + min;
 };
 
