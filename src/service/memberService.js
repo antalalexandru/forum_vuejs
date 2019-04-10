@@ -7,7 +7,8 @@ function hasAnyRole(roles) {
 export const userLoggedIn = localStorage.authentication_token != null;
 
 export const userPermissions = {
-    canCloseTopic: hasAnyRole(['ADMIN', 'MODERATOR'])
+    canCloseTopic: hasAnyRole(['ADMIN', 'MODERATOR']),
+    canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR'])
 };
 
 export function checkLogin(username, password, onsuccess, onerror) {
