@@ -27,3 +27,52 @@ a:hover {
     text-decoration: none;
 }
 
+
+.pagination {
+    background: #ebebeb;
+    color: #222;
+    font-size: 13px;
+    padding: 10px;
+    line-height: 1.8;
+}
+
+.pagecurrent {
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-weight: bold;
+    text-align: center;
+    background: #505050;
+    color: #fff;
+    vertical-align: middle;
+    text-decoration: none;
+    margin: 0 2px;
+}
+
+.pagelink {
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-weight: bold;
+    text-align: center;
+    background: #fff;
+    vertical-align: middle;
+    text-decoration: none;
+    margin: 0 2px;
+    cursor: pointer;
+}
+
+.pagelink a{
+    color: #444;
+}
+
+a .pagelink {
+    color: #444;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+    background-color: #FFFFFF;
+}
+.table-striped>tbody>tr:nth-child(even)>td,
+.table-striped>tbody>tr:nth-child(even)>th {
+    background-color: #F2F2F2;
+}

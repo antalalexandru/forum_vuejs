@@ -55,6 +55,34 @@
             <button type="button" class="btn btn-secondary">New reply</button> -->
         </div>
 
+        <div class="pagination">
+            <span v-if="current_page > 1">
+                <span class="pagelink" v-if="current_page - 4 > 0" v-on:click="changePage(1)">
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                </span>
+                <span class="pagelink" v-on:click="changePage(current_page - 1)">
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                </span>
+                <span v-for="it in [3, 2, 1]" :key="it">
+                    <span class="pagelink" v-if="current_page - it > 0" v-on:click="changePage(current_page - it)">
+                        {{current_page - it}}
+                    </span>
+                </span>
+            </span>
+            <span><span class="pagecurrent">{{current_page}}</span></span>
+            <span v-for="it in [1, 2, 3]" :key="it">
+                <span class="pagelink" v-if="current_page + it <= total_pages" v-on:click="changePage(current_page + it)">
+                    {{current_page + it}}
+                </span>
+            </span>
+            <span><span class="pagelink" v-if="current_page !== total_pages" v-on:click="changePage(current_page + 1)">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </span></span>
+            <span><span class="pagelink" v-if="current_page + 3 < total_pages" v-on:click="changePage(total_pages)">
+                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            </span></span>
+        </div>
+
         <table class="table table-striped" style="width: 100%">
             <!-- <transition-group name="list" tag="tbody"> -->
             <tbody>
@@ -103,8 +131,7 @@
                     <div style="color: #888; font-size: 13px; margin-top: 10px; text-align: right">
                         <ul>
                             <li style="display:inline; padding: 10px;"
-                                v-if="!(current_page === 1 && post.id === posts[0].id)"><i
-                                    class="fas fa-times-circle"></i> Delete
+                                v-if="!(current_page === 1 && post.id === posts[0].id)"><i class="fas fa-times-circle"></i> Delete
                             </li>
                             <li style="display:inline; padding: 10px; cursor: pointer" v-if="userPermissions.canEditTopicPost" v-on:click="setEditPostMode(post, index)"><i class="fas fa-edit"></i> Edit</li>
                             <li style="display:inline; padding: 10px;"><i class="fas fa-comment-alt"></i> Quote</li>
@@ -271,11 +298,17 @@
                     console.log(err);
                 };
                 getPostsByTopicId(this.$route.params.topic_id, this.current_page, onSuccessPosts, onFailurePosts);
+            },
+
+            changePage(pageNumber) {
+                this.current_page = pageNumber;
+                this.$route.query.page = pageNumber;
+                this.loadPosts();
             }
 
         },
 
-        created() {
+        mounted() {
             let onSuccessTopicInformation = (response) => {
                 this.topic_details = response.data;
             };
