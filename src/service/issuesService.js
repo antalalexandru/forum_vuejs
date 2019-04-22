@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getIssues = async (onsuccess, onerror) => {
+export const getIssues =  (onsuccess, onerror) => {
     axios.get('http://localhost:8082/issue')
         .then((response) => {
             onsuccess(response);
@@ -10,7 +10,7 @@ export const getIssues = async (onsuccess, onerror) => {
         });
 };
 
-export const addNewIssue = async (issueData, onsuccess, onerror) => {
+export const addNewIssue =  (issueData, onsuccess, onerror) => {
     axios.request({
         url: 'http://localhost:8082/issue',
         method: 'post',
@@ -33,7 +33,7 @@ export const addNewIssue = async (issueData, onsuccess, onerror) => {
         });
 };
 
-export const getIssueDetails = async(issueId, onsuccess, onerror) => {
+export const getIssueDetails = (issueId, onsuccess, onerror) => {
     axios.get('http://localhost:8082/issue/' + issueId)
         .then((response) => {
             onsuccess(response);
@@ -43,7 +43,7 @@ export const getIssueDetails = async(issueId, onsuccess, onerror) => {
         });
 };
 
-export const getIssueComments = async(issueId, onsuccess, onerror) => {
+export const getIssueComments = (issueId, onsuccess, onerror) => {
     axios.get('http://localhost:8082/issue/' + issueId + '/comments')
         .then((response) => {
             onsuccess(response);

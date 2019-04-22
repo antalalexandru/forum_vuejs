@@ -7,6 +7,10 @@ import VueSwal from 'vue-swal'
 
 Vue.config.productionTip = false;
 
+import Toasted from 'vue-toasted';
+
+Vue.use(Toasted);
+
 Vue.use( CKEditor );
 Vue.use(Notifications);
 Vue.use(VueSwal);

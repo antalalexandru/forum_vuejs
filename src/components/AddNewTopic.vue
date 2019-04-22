@@ -1,8 +1,7 @@
 <template>
     <div>
 
-        <h1 style="padding: 70px 0; font-family: 'Raleway'; font-weight: 200; font-size: 60px; text-align: center">Add new topic</h1>
-
+        <h1 class="mt-4">Add new topic</h1>
 
         <div class="form-group">
             <label for="usernameInput">Title</label>
@@ -15,7 +14,7 @@
         </div>
 
         <div style="text-align: right; margin-top: 15px;">
-            <button type="button" class="btn btn-secondary" v-on:click="addTopic">
+            <button type="button" class="btn btn-secondary" v-on:click="addTopic" :disabled="disableAddButton">
                 <i class="fas fa-plus-circle"></i> Add new topic
             </button>
         </div></div>
@@ -38,19 +37,57 @@
                 input: {
                     title: '',
                     content: ''
-                }
+                },
+                disableAddButton: false
             }
         },
 
         methods: {
+
             addTopic() {
 
-                addNewTopic({
+                this.disableAddButton = true;
+
+                let loadingToaster = this.$toasted.show("Saving topic ...", {
+                    theme: "toasted-primary",
+                    position: "top-center",
+                    duration : 1000,
+                    type: 'info',
+                    iconPack: 'fontawesome',
+                    icon: 'info'
+                });
+
+                setTimeout(() => addNewTopic({
                     title: this.input.title,
                     content: this.input.content,
                     categoryId: this.$route.params.category_id
-                });
-
+                }, (response, error) => {
+                    loadingToaster.goAway(0);
+                    if(error == null) {
+                        this.$toasted.show("Topic succesfully saved", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 1000,
+                            onComplete: () => {
+                                this.$router.push('/topic/' + response.data.id);
+                            },
+                            type: 'success',
+                            iconPack: 'fontawesome',
+                            icon: 'check'
+                        });
+                    } else {
+                        // todo check error message
+                        this.disableAddButton = false;
+                        this.$toasted.show("Topic saving error", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 2000,
+                            type: 'error',
+                            iconPack: 'fontawesome',
+                            icon: 'info'
+                        });
+                    }
+                }), 1000);
             }
         }
     }

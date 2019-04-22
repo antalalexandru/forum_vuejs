@@ -5,7 +5,7 @@ import SignUp from "@/components/SignUp";
 import EmailConfirmationReminder from "@/components/EmailConfirmationReminder";
 import AccountActivation from "@/components/AccountActivation";
 import UserProfile from "@/components/UserProfile";
-import Categories from "@/components/Categories";
+import BoardIndex from "@/components/BoardIndex";
 import Issues from "@/components/Issues";
 
 import CategoryDetails from "../components/CategoryDetails";
@@ -13,6 +13,7 @@ import AddNewIssue from "@/components/AddNewIssue";
 import IssueDetails from "@/components/IssueDetails";
 import AddNewTopic from "@/components/AddNewTopic";
 import ViewTopic from "@/components/ViewTopic";
+import AccountSettings from "@/components/AccountSettings";
 
 Vue.use(Router);
 
@@ -21,8 +22,8 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'categories',
-            component: Categories
+            name: 'board_index',
+            component: BoardIndex
         },
         // ---------------------------------------
         // Log in component
@@ -60,6 +61,14 @@ export default new Router({
             name: 'user_profile',
             component: UserProfile
         },
+
+        {
+            path: '/user_settings',
+            name: 'account_settings',
+            component: AccountSettings
+        },
+
+
 
         {
             path: '/category/:category_id',

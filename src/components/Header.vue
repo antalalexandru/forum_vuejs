@@ -38,9 +38,10 @@
                         {{ loggedIn.username }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userNavbarDropdown">
-                        <router-link class="dropdown-item" :to="{ name: 'user_profile', params: { user_id: loggedIn.id } }">Profilul meu</router-link>
+                        <router-link class="dropdown-item" :to="{ name: 'user_profile', params: { user_id: loggedIn.id } }"><i class="fas fa-user"></i> My profile</router-link>
+                        <router-link class="dropdown-item" :to="{ name: 'account_settings'}"><i class="fas fa-cog"></i> Account settings</router-link>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" v-on:click="logout"><i class="fas fa-sign-out-alt"></i> Delogare</a>
+                        <a class="dropdown-item" href="#" v-on:click="logout"><i class="fas fa-sign-out-alt"></i> Sign out</a>
                     </div>
                 </div>
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-else>
@@ -57,29 +58,34 @@
 </template>
 
 <script>
-    import {getSelfUserInformation} from "@/service/memberService";
+    import {userLoggedIn, storeUserInformation, getUserAvatar} from "@/service/memberService";
+    import {getSelfUserInformation} from "@/service/api";
+
     export default {
         name: "Header",
-        beforeCreate() {
 
-        },
         data () {
             return {
-                loggedIn: localStorage.authentication_token != null
+                loggedIn: localStorage.authentication_token != null,
+                userLoggedIn: userLoggedIn
             }
         },
+
         created() {
             getSelfUserInformation((data) => {
                 this.loggedIn = data;
+                storeUserInformation(data);
             });
         },
+
         methods: {
+            getUserAvatar: getUserAvatar,
             logout: () => {
                 localStorage.removeItem('authentication_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('role');
                 window.location.reload();
-            }
+            },
         },
     }
 

@@ -74,5 +74,16 @@ a .pagelink {
 }
 .table-striped>tbody>tr:nth-child(even)>td,
 .table-striped>tbody>tr:nth-child(even)>th {
-    background-color: #F2F2F2;
+    background-color: #FAFAFA;
+}
+
+.maintitle {
+    background: #EBEBEB;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 10px 15px;
 }

@@ -55,41 +55,19 @@
             <button type="button" class="btn btn-secondary">New reply</button> -->
         </div>
 
-        <div class="pagination">
-            <span v-if="current_page > 1">
-                <span class="pagelink" v-if="current_page - 4 > 0" v-on:click="changePage(1)">
-                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
-                </span>
-                <span class="pagelink" v-on:click="changePage(current_page - 1)">
-                    <i class="fa fa-angle-left" aria-hidden="true"></i>
-                </span>
-                <span v-for="it in [3, 2, 1]" :key="it">
-                    <span class="pagelink" v-if="current_page - it > 0" v-on:click="changePage(current_page - it)">
-                        {{current_page - it}}
-                    </span>
-                </span>
-            </span>
-            <span><span class="pagecurrent">{{current_page}}</span></span>
-            <span v-for="it in [1, 2, 3]" :key="it">
-                <span class="pagelink" v-if="current_page + it <= total_pages" v-on:click="changePage(current_page + it)">
-                    {{current_page + it}}
-                </span>
-            </span>
-            <span><span class="pagelink" v-if="current_page !== total_pages" v-on:click="changePage(current_page + 1)">
-                <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </span></span>
-            <span><span class="pagelink" v-if="current_page + 3 < total_pages" v-on:click="changePage(total_pages)">
-                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-            </span></span>
-        </div>
+        <Pagination
+            :current_page="current_page"
+            :total_pages="total_pages"
+            :changePage="changePage"
+        />
 
-        <table class="table table-striped" style="width: 100%">
+        <table class="table table-striped" style="width: 100%; margin-bottom: none">
             <!-- <transition-group name="list" tag="tbody"> -->
             <tbody>
             <tr v-for="(post, key, index) in posts" :key="post.id" style="width: 100%">
                 <td style="width: 250px; text-align: center; vertical-align: top">
                     <div style="font-size: 18px">{{post.author.username}}</div>
-                    <img src="https://forum.softpedia.com/uploads/profile/photo-823128.jpg"
+                    <img :src="getUserAvatar(post.author.avatar)"
                          style="max-width: 100px; border-radius: 50%; margin: 10px;">
                     <div v-html="getUserGroupFormatted(post.author.group)"></div>
                     <div>{{post.author.numberOfPosts}} posts</div>
@@ -149,7 +127,6 @@
             </tr>
             </tbody>
             <!-- </transition-group> -->
-
         </table>
 
         <div style="text-align: right; margin: 10px 0">
@@ -188,14 +165,17 @@
         getUserGroupFormatted,
     } from "@/service/utils";
 
-    import {userPermissions} from "@/service/memberService";
+    import {userPermissions, getUserAvatar} from "@/service/memberService";
 
     import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+    import Pagination from "@/components/Pagination";
 
 
     export default {
         name: "ViewTopic",
-
+        components: {
+            Pagination
+        },
         data() {
             return {
                 topic_details: {},
@@ -221,6 +201,7 @@
         methods: {
             formatTimestamp: formatTimestamp,
             getUserGroupFormatted: getUserGroupFormatted,
+            getUserAvatar: getUserAvatar,
 
             addNewPost() {
                 let onSuccessAddPost = (response) => {
@@ -308,7 +289,7 @@
 
         },
 
-        mounted() {
+        created() {
             let onSuccessTopicInformation = (response) => {
                 this.topic_details = response.data;
             };
@@ -326,8 +307,6 @@
                 console.log(err);
             };
             getPostsByTopicId(this.$route.params.topic_id, this.current_page, onSuccessPosts, onFailurePosts);
-
-
         }
     }
 </script>

@@ -11,6 +11,15 @@ export const userPermissions = {
     canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR'])
 };
 
+export const storeUserInformation = (userData) => {
+    localStorage.setItem('selfUser', JSON.stringify(userData));
+};
+
+export const getUserInformation = () => {
+    let user = localStorage.getItem('selfUser');
+    return user && JSON.parse(user);
+};
+
 export function checkLogin(username, password, onsuccess, onerror) {
     let params = new URLSearchParams();
     params.append('grant_type','password');
@@ -19,8 +28,8 @@ export function checkLogin(username, password, onsuccess, onerror) {
     params.append('client_id','clientIdPassword');
     axios.post("http://localhost:8085/spring-security-oauth-server/oauth/token", params.toString(), {
         headers: {
-            "Authorization": 'Basic ' + btoa("clientIdPassword:secret"),
-            "Content-Type": 'application/x-www-form-urlencoded'
+            'Authorization': 'Basic ' + btoa("clientIdPassword:secret"),
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     })
     .then(response => {
@@ -31,7 +40,7 @@ export function checkLogin(username, password, onsuccess, onerror) {
     });
 }
 
-export const checkSignup = async (username, password, email, onsuccess, onerror) => {
+export const checkSignup = (username, password, email, onsuccess, onerror) => {
     axios.request({
         url: 'http://localhost:8082/user',
         method: 'post',
@@ -53,7 +62,7 @@ export const checkSignup = async (username, password, email, onsuccess, onerror)
     });
 };
 
-export const activateUserAccount = async(userId, activationToken, onsuccess, onerror) => {
+export const activateUserAccount = (userId, activationToken, onsuccess, onerror) => {
     axios.get('http://localhost:8082/user/activate_account/' + userId + '/token/' + activationToken)
         .then((response) => {
             onsuccess(response);
@@ -63,7 +72,7 @@ export const activateUserAccount = async(userId, activationToken, onsuccess, one
         });
 };
 
-export const getSelfUserInformation = async(onsuccess) => {
+export const getSelfUserInformation = (onsuccess) => {
     if(localStorage.authentication_token) {
         axios.request({
             url: 'http://127.0.0.1:8082/user/me',
@@ -82,7 +91,7 @@ export const getSelfUserInformation = async(onsuccess) => {
     }
 };
 
-export const getUserById = async(user_id, onsuccess) => {
+export const getUserById = (user_id, onsuccess) => {
     if(localStorage.authentication_token) {
         axios.get('http://localhost:8082/user/' + user_id)
             .then(response => {
@@ -92,5 +101,12 @@ export const getUserById = async(user_id, onsuccess) => {
                 // TODO;
             });
     }
+};
+
+export const getUserAvatar = (avatar) => {
+    if(avatar == null) {
+        return 'https://forum.softpedia.com//public/style_images/carbon_blue/profile/default_large.png';
+    }
+    return avatar;
 };
 

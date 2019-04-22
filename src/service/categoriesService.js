@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getCategories = async(onsuccess, onerror) => {
+export const getCategories = (onsuccess, onerror) => {
     axios.get('http://localhost:8082/category')
         .then((response) => {
             onsuccess(response);
@@ -10,8 +10,8 @@ export const getCategories = async(onsuccess, onerror) => {
         });
 };
 
-export const getCategory = async(caegory_id, onsuccess, onerror) => {
-    axios.get('http://localhost:8082/category/' + caegory_id)
+export const getCategory = (category_id, onsuccess, onerror) => {
+    axios.get('http://localhost:8082/category/' + category_id)
         .then((response) => {
             onsuccess(response);
         })

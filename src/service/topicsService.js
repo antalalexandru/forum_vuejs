@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const addNewTopic = async (topicData, onSuccess, onFailure) => {
+export const addNewTopic = async (topicData, handler) => {
     axios.request({
         url: 'http://localhost:8082/topic',
         method: 'post',
@@ -11,37 +11,36 @@ export const addNewTopic = async (topicData, onSuccess, onFailure) => {
         },
         headers: {
             "Content-Type": 'application/json',
-            "Access-Control-Allow-Origin": "*",
             "Authorization": "Bearer " + localStorage.authentication_token
         }
     })
         .then(response => {
-            onSuccess(response);
+            handler(response);
         })
         .catch((err) => {
-            onFailure(err);
+            handler(null, err);
         });
 };
 
-export const getTopicsByCategoryId = async (categoryId, onSuccess, onFailure) => {
-    axios.get('http://localhost:8082/topic?category_id=' + categoryId)
+export const getTopicsByCategoryId = (categoryId, page, onSuccess, onFailure) => {
+    axios.get('http://localhost:8082/topic?category_id=' + categoryId + '&page=' + page)
         .then(response => {onSuccess(response);})
         .catch(err => onFailure(err));
 };
 
-export const getTopicById = async (topicId, onSuccess, onFailure) => {
+export const getTopicById = (topicId, onSuccess, onFailure) => {
     axios.get('http://localhost:8082/topic/' + topicId)
         .then(response => onSuccess(response))
         .catch(err => onFailure(err));
 };
 
-export const getPostsByTopicId = async(topicId, page, onSuccess, onFailure) => {
+export const getPostsByTopicId = (topicId, page, onSuccess, onFailure) => {
     axios.get('http://localhost:8082/post?topic_id=' + topicId + '&page=' + page)
         .then(response => onSuccess(response))
         .catch(err => onFailure(err));
 };
 
-export const addPostToTopic = async (topicId, postContent, onSuccess, onFailure) => {
+export const addPostToTopic = (topicId, postContent, onSuccess, onFailure) => {
     axios.request({
         url: 'http://localhost:8082/post',
         method: 'post',
@@ -63,7 +62,7 @@ export const addPostToTopic = async (topicId, postContent, onSuccess, onFailure)
         });
 };
 
-export const setTopicClosedStatus = async(topicId, topicClosed, handler) => {
+export const setTopicClosedStatus = (topicId, topicClosed, handler) => {
     axios.request({
             url: 'http://localhost:8082/topic/' + topicId + '/closed/' + (topicClosed ? 'true' : 'false'),
             method: 'patch',
@@ -77,7 +76,7 @@ export const setTopicClosedStatus = async(topicId, topicClosed, handler) => {
         .catch(err => handler(null, err));
 };
 
-export const editTopicPost = async (postId, newContent, editReason, handler) => {
+export const editTopicPost =  (postId, newContent, editReason, handler) => {
     axios.request({
         url: 'http://localhost:8082/post',
         method: 'patch',
