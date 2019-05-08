@@ -3,19 +3,19 @@
 
         <div class="content" v-if="checked_validation && ! validation_succesful">
             <i class="far fa-times-circle error" ></i>
-            <p>A apărut o eroare. Date incorecte, sau contul este deja activat :)</p>
+            <p>Oops, something wen wrong. Maybe invalid data, or this account is already activated.</p>
         </div>
 
         <div class="content" v-if="checked_validation && validation_succesful">
             <i class="far fa-check-circle success"></i>
-            <p>Contul a fost validat :)</p>
+            <p>Account activated succesfully :)</p>
         </div>
 
     </div>
 </template>
 
 <script>
-    import {activateUserAccount} from "@/service/memberService";
+    import {activateUserAccount} from "@/service/api";
 
     export default {
         name: "AccountActivation",
@@ -26,15 +26,13 @@
             }
         },
         created() {
-            let successHandler = (response) => {
+            activateUserAccount({
+                userId: this.$route.params.user_id,
+                activationToken: this.$route.params.activation_token
+            }, (response, error) => {
                 this.checked_validation = true;
-                this.validation_succesful = (response.status === 200);
-            };
-            let errorHandler = (err) => {
-                this.checked_validation = true;
-                this.validation_succesful = false;
-            };
-            activateUserAccount(this.$route.params.user_id, this.$route.params.activation_token, successHandler, errorHandler);
+                this.validation_succesful = (error == null);
+            });
         }
     }
 </script>

@@ -4,11 +4,10 @@ const resourcesServerUrl = 'http://localhost:8082';
 const authorizationServerUrl = 'http://localhost:8085';
 
 export const basicRequest = (request) => {
-    axios
-        .request({
+    axios.request({
         url: resourcesServerUrl + request.path,
         method: request.method ? request.method : 'get',
-        headers: request.headers,
+        headers: request.headers ? request.headers : {},
         data: request.data
     })
         .then(response => request.handler(response.data))
@@ -103,7 +102,27 @@ export const athenticatedRequest = (request) => {
                 }
             }
         });
+};
 
+export const signUp = (userData, handler) => {
+    basicRequest({
+        path: '/user',
+        method: 'post',
+        handler: handler,
+        data: {
+            username: userData.username,
+            password: userData.password,
+            email: userData.email
+        }
+    });
+};
+
+export const activateUserAccount = (data, handler) => {
+    basicRequest({
+        path: '/user/activate_account/' + data.userId + '/token/' + data.activationToken,
+        method: 'get',
+        handler: handler,
+    });
 };
 
 export const getSelfUserInformation = (handler) => {
