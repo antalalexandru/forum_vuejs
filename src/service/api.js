@@ -100,6 +100,8 @@ export const athenticatedRequest = (request) => {
                             console.log('Check refresh token expire');
                         });
                 }
+            } else {
+                request.handler(null, err);
             }
         });
 };
@@ -130,5 +132,17 @@ export const getSelfUserInformation = (handler) => {
         path: '/user/me',
         method: 'get',
         handler: handler
+    });
+};
+
+export const changeCurrentPassword = (data, handler) => {
+    athenticatedRequest({
+        path: '/user/change_password',
+        method: 'patch',
+        handler: handler,
+        data: {
+            oldPassword: data.oldPassword,
+            newPassword: data.newPassword
+        }
     });
 };

@@ -26,6 +26,14 @@
                     <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">123</div>
                     <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
 
+                        <div class="alert alert-success" role="alert" v-if="this.passwordSuccessfullyChanged">
+                            Password changed succesfully
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" v-if="this.errorProcessingPasswordChangeRequest">
+                            There was an error processing the request. Please try again later.
+                        </div>
+
                         <div class="form-group">
                             <label for="currentPasswordInput">Current password</label>
                             <input type="password" class="form-control" v-bind:class="{ 'is-invalid': invalidCurrentPassword }" id="currentPasswordInput" v-model="input.changePassword.currentPassword">
@@ -64,6 +72,9 @@
 </template>
 
 <script>
+
+    import {changeCurrentPassword} from "@/service/api";
+
     export default {
         name: "AccountSettings",
         data() {
@@ -78,6 +89,9 @@
                     }
                 },
 
+                passwordSuccessfullyChanged: false,
+                errorProcessingPasswordChangeRequest: false,
+
                 invalidCurrentPassword: false,
                 invalidNewPassword: false,
                 passwordsMismatch: false,
@@ -88,6 +102,49 @@
         methods: {
             changePassword() {
 
+                let currentPassword = this.input.changePassword.currentPassword;
+                let newPassword = this.input.changePassword.newPassword;
+                let confirmNewPassword = this.input.changePassword.confirmNewPassword;
+
+                this.errorProcessingPasswordChangeRequest = false;
+                this.passwordSuccessfullyChanged = false;
+
+                this.invalidCurrentPassword = false;
+                this.invalidNewPassword = false;
+                this.passwordsMismatch =false;
+
+                this.invalidNewPasswordMessage = '';
+
+                if(newPassword !== confirmNewPassword) {
+                    this.passwordsMismatch = true;
+                } else {
+                    changeCurrentPassword({
+                        oldPassword: currentPassword,
+                        newPassword: newPassword
+                    }, (response, error) => {
+                        if(error == null) {
+                            this.passwordSuccessfullyChanged = true;
+                            this.input.changePassword.currentPassword = '';
+                            this.input.changePassword.newPassword = '';
+                            this.input.changePassword.confirmNewPassword = '';
+                        } else {
+                            let response = error.response;
+                            if(response.status === 422) {
+                                // invalid data
+                                for(let invalid_field of response.data.details) {
+                                    if(invalid_field.fieldName === "newPassword") {
+                                        this.invalidNewPassword = true;
+                                        this.invalidNewPasswordMessage += "<i class=\"far fa-times-circle\"></i> " + invalid_field.error + "<br>";
+                                    }
+                                }
+                            } else if(response.status === 400 && response.data.details === "Invalid current password") {
+                                this.invalidCurrentPassword = true;
+                            } else {
+                                this.errorProcessingPasswordChangeRequest = true;
+                            }
+                        }
+                    });
+                }
             }
         },
 
@@ -96,7 +153,7 @@
 
 <style scoped>
 
-    input {
+    input, .alert {
         max-width: 550px;
     }
 
