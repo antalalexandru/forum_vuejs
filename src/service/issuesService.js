@@ -21,7 +21,6 @@ export const addNewIssue =  (issueData, onsuccess, onerror) => {
         },
         headers: {
             "Content-Type": 'application/json',
-            "Access-Control-Allow-Origin": "*",
             "Authorization": "Bearer " + localStorage.authentication_token
         }
     })

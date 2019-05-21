@@ -25,15 +25,12 @@
                     </div>
                     <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">123</div>
                     <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
-
                         <div class="alert alert-success" role="alert" v-if="this.passwordSuccessfullyChanged">
                             Password changed succesfully
                         </div>
-
                         <div class="alert alert-danger" role="alert" v-if="this.errorProcessingPasswordChangeRequest">
                             There was an error processing the request. Please try again later.
                         </div>
-
                         <div class="form-group">
                             <label for="currentPasswordInput">Current password</label>
                             <input type="password" class="form-control" v-bind:class="{ 'is-invalid': invalidCurrentPassword }" id="currentPasswordInput" v-model="input.changePassword.currentPassword">
@@ -41,7 +38,6 @@
                                 Invalid current password
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="newPasswordInput">New password</label>
                             <input type="password" class="form-control" v-bind:class="{ 'is-invalid': invalidNewPassword }" id="newPasswordInput" v-model="input.changePassword.newPassword">
@@ -50,7 +46,6 @@
                                 <div v-html="invalidNewPasswordMessage"></div>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="repeatedPasswordInput">Confirm new password</label>
                             <input type="password" class="form-control" v-bind:class="{ 'is-invalid': passwordsMismatch }" id="repeatedPasswordInput" v-model="input.changePassword.confirmNewPassword">
@@ -58,16 +53,11 @@
                                 <i class="fas fa-exclamation-triangle"></i> Passwords do not match
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary" v-on:click="changePassword()">Change password</button>
-
-
                     </div>
-
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 

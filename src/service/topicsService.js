@@ -67,7 +67,6 @@ export const setTopicClosedStatus = (topicId, topicClosed, handler) => {
             method: 'patch',
             headers: {
                 "Content-Type": 'application/json',
-                "Access-Control-Allow-Origin": "*",
                 "Authorization": "Bearer " + localStorage.authentication_token
             }
         })
@@ -81,7 +80,6 @@ export const editTopicPost =  (postId, newContent, editReason, handler) => {
         method: 'patch',
         headers: {
             "Content-Type": 'application/json',
-            "Access-Control-Allow-Origin": "*",
             "Authorization": "Bearer " + localStorage.authentication_token
         },
         data: {
