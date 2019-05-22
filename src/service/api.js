@@ -154,3 +154,12 @@ export const resetPasswordRequest = (data, handler) => {
         handler: handler
     });
 };
+
+export const resetPassword = (data, handler) => {
+    basicRequest({
+        path: '/user/reset_password',
+        method: 'patch',
+        data: data,
+        handler: handler
+    });
+};

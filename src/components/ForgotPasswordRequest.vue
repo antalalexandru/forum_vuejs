@@ -33,11 +33,19 @@
         },
         methods: {
             resetPassword() {
-                resetPasswordRequest({
-                    email: this.input.email
-                }, (response, error) => {
-
-                });
+                if(this.input.email.trim().length > 0) {
+                    this.successful_request = false;
+                    this.unsuccessful_request = false;
+                    resetPasswordRequest({
+                        email: this.input.email.trim()
+                    }, (response, error) => {
+                        if (error == null) {
+                            this.successful_request = true;
+                        } else {
+                            this.unsuccessful_request = true;
+                        }
+                    });
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ import AddNewTopic from "@/components/AddNewTopic";
 import ViewTopic from "@/components/ViewTopic";
 import AccountSettings from "@/components/AccountSettings";
 import ForgotPasswordRequest from "@/components/ForgotPasswordRequest";
+import ResetPassword from "@/components/ResetPassword";
 
 Vue.use(Router);
 
@@ -113,6 +114,12 @@ export default new Router({
             path: '/forgot_password',
             name: 'forgot_password',
             component: ForgotPasswordRequest
+        },
+
+        {
+            path: '/reset_password',
+            name: 'reset_password',
+            component: ResetPassword
         }
 
     ]
