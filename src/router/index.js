@@ -14,6 +14,7 @@ import IssueDetails from "@/components/IssueDetails";
 import AddNewTopic from "@/components/AddNewTopic";
 import ViewTopic from "@/components/ViewTopic";
 import AccountSettings from "@/components/AccountSettings";
+import ForgotPasswordRequest from "@/components/ForgotPasswordRequest";
 
 Vue.use(Router);
 
@@ -106,6 +107,12 @@ export default new Router({
             path: '/topic/:topic_id',
             name: 'topic_details',
             component: ViewTopic
+        },
+
+        {
+            path: '/forgot_password',
+            name: 'forgot_password',
+            component: ForgotPasswordRequest
         }
 
     ]

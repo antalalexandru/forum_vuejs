@@ -1,20 +1,23 @@
 <template>
     <div class="content">
-        <h2 class="display-4">Autentificare</h2>
-
+        <h1 style="padding: 70px 0; font-family: 'Raleway'; text-align: center; font-weight: 200; font-size: 60px;">Sign in</h1>
         <div class="alert alert-danger" role="alert" v-if="bad_credentials">
-            Numele de utilizator sau parola sunt greşite
+            Bad credentials
         </div>
 
         <div class="form-group">
-            <label for="exampleInputEmail1">Nume de utilizator</label>
+            <label for="exampleInputEmail1">Username</label>
             <input type="text" class="form-control" id="exampleInputEmail1" v-model="input.username">
         </div>
         <div class="form-group">
-            <label for="exampleInputPassword1">Parola</label>
+            <label for="exampleInputPassword1">Password</label>
             <input type="password" class="form-control" id="exampleInputPassword1" v-model="input.password">
         </div>
-        <button type="submit" class="btn btn-primary" v-on:click="login()">Autentificare</button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" v-on:click="login()">Authentication</button>
+        </div>
+
+        <div class="form-group" style="text-align: right"><router-link class="nav-link" to="/forgot_password">Forgot your password?</router-link></div>
     </div>
 </template>
 

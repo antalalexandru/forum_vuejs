@@ -146,3 +146,11 @@ export const changeCurrentPassword = (data, handler) => {
         }
     });
 };
+
+export const resetPasswordRequest = (data, handler) => {
+    basicRequest({
+        path: '/user/reset_password_request/' + data.email,
+        method: 'patch',
+        handler: handler
+    });
+};
