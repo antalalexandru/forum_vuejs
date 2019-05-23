@@ -163,3 +163,28 @@ export const resetPassword = (data, handler) => {
         handler: handler
     });
 };
+
+export const sendReport = (data, handler) => {
+    athenticatedRequest({
+        path: '/report',
+        method: 'post',
+        handler: handler,
+        data: data
+    });
+};
+
+export const getUnresolvedReportsCount = (handler) => {
+    athenticatedRequest({
+        path: '/report/unresolved',
+        method: 'get',
+        handler: handler,
+    });
+};
+
+export const getReports = (handler) => {
+    athenticatedRequest({
+        path: '/report',
+        method: 'get',
+        handler: handler,
+    });
+};

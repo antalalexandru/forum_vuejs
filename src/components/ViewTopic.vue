@@ -108,6 +108,7 @@
 
                     <div style="color: #888; font-size: 13px; margin-top: 10px; text-align: right">
                         <ul>
+                            <li v-on:click="setPostIdToReport(post.id)" v-if="userPermissions.canReportPost" style="display:inline; padding: 10px; cursor: pointer" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-exclamation-triangle"></i> Report</li>
                             <li style="display:inline; padding: 10px;"
                                 v-if="!(current_page === 1 && post.id === posts[0].id)"><i class="fas fa-times-circle"></i> Delete
                             </li>
@@ -128,6 +129,26 @@
             </tbody>
             <!-- </transition-group> -->
         </table>
+
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Report post #{{this.postIdToReport}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea v-model="input.reportedContentDetails" class="form-control" id="exampleFormControlTextarea1" rows="4" placeholder="Additional information ..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="sendReport">Send report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div style="text-align: right; margin: 10px 0">
             <button class="btn btn-secondary" type="button" v-if="!topic_details.closed" data-toggle="collapse"
@@ -170,6 +191,8 @@
     import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
     import Pagination from "@/components/Pagination";
 
+    import {sendReport} from "@/service/api";
+
 
     export default {
         name: "ViewTopic",
@@ -189,12 +212,15 @@
                     content: '',
 
                     editedPostContent: '',
-                    editedPostReason: ''
+                    editedPostReason: '',
+
+                    reportedContentDetails: ''
                 },
                 userPermissions: userPermissions,
 
                 editPostId: 0,
                 editPostIndex: 0,
+                postIdToReport: 0
             }
         },
 
@@ -285,6 +311,51 @@
                 this.current_page = pageNumber;
                 this.$route.query.page = pageNumber;
                 this.loadPosts();
+            },
+
+            setPostIdToReport(postIdToReport) {
+                this.postIdToReport = postIdToReport;
+            },
+
+            sendReport() {
+                if(this.postIdToReport !== 0) {
+                    let loadingToaster = this.$toasted.show("Sending report ...", {
+                        theme: "toasted-primary",
+                        position: "top-center",
+                        duration : 1000,
+                        type: 'info',
+                        iconPack: 'fontawesome',
+                        icon: 'info'
+                    });
+
+                    setTimeout(() => sendReport({
+                        postId: this.postIdToReport,
+                        content: this.input.reportedContentDetails
+                    }, (response, error) => {
+                        loadingToaster.goAway(0);
+                        if(error == null) {
+                            this.$toasted.show("Report succesfully send", {
+                                theme: "toasted-primary",
+                                position: "top-center",
+                                duration : 1000,
+                                type: 'success',
+                                iconPack: 'fontawesome',
+                                icon: 'check'
+                            });
+                        } else {
+                            // todo check error message
+                            this.$toasted.show("Error sending report", {
+                                theme: "toasted-primary",
+                                position: "top-center",
+                                duration : 2000,
+                                type: 'error',
+                                iconPack: 'fontawesome',
+                                icon: 'info'
+                            });
+                        }
+                    }), 1000);
+
+                }
             }
 
         },

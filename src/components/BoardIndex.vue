@@ -1,27 +1,27 @@
 <template>
     <div class="hello">
 
-        <h1 style="padding: 70px 0; font-family: 'Raleway'; text-align: center; font-weight: 200; font-size: 60px;">Licența lui alex</h1>
-
+        <!-- <h1 style="padding: 70px 0; font-family: 'Raleway'; text-align: center; font-weight: 200; font-size: 60px;">Licența lui alex</h1>
+        -->
 
         <Breadcrumb></Breadcrumb>
 
         <div v-for="parentCategory in categoriesList" :key="parentCategory.id" style="margin-bottom: 20px;">
             <div class="maintitle">{{parentCategory.name}}</div>
             <SubcategoriesDetails
-                :category="parentCategory"
+                    :category="parentCategory"
             />
         </div>
 
         <div class="maintitle">Statistics</div>
-        <table class="table" style="text-align: center; border: 1px solid #ddd" >
+        <table class="table" style="text-align: center; border: 1px solid #ddd">
             <tbody>
-                <tr>
-                    <td style="width: 25%"><h4>{{formatNumber(statistics.totalPosts)}}</h4>Total posts</td>
-                    <td style="width: 25%"><h4>{{statistics.totalTopics}}</h4>Total topics</td>
-                    <td style="width: 25%"><h4>{{statistics.totalUsers}}</h4>Total users</td>
-                    <td style="width: 25%"><h4>{{statistics.lastUsername}}</h4>Last registered user</td>
-                </tr>
+            <tr>
+                <td style="width: 25%"><h4>{{formatNumber(statistics.totalPosts)}}</h4>Total posts</td>
+                <td style="width: 25%"><h4>{{statistics.totalTopics}}</h4>Total topics</td>
+                <td style="width: 25%"><h4>{{statistics.totalUsers}}</h4>Total users</td>
+                <td style="width: 25%"><h4>{{statistics.lastUsername}}</h4>Last registered user</td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -56,7 +56,7 @@
             formatTimestamp: formatTimestamp,
 
             formatNumber(number) {
-                if(number == null || number === undefined) {
+                if (number == null) {
                     return 0;
                 }
                 return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -72,7 +72,7 @@
             getCategories(onSuccessCategories, onErrorCategories);
 
             getCommunityStatistics((response, error) => {
-                if(error == null) {
+                if (error == null) {
                     this.statistics = response;
                     console.log(this.statistics);
                 }

@@ -8,7 +8,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
+                    <!-- <li class="nav-item active">
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
@@ -27,11 +27,18 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a>
                         </div>
-                    </li>
+                    </li> -->
                 </ul>
 
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-if="this.loggedIn">
-                    <li class="nav-item dropdown">
+
+                    <li class="nav-item" v-if="canSeeReportedPosts && numberOfUnresolvedReports >= 0">
+                        <a class="nav-link" href="#" v-bind:class="{ 'text-danger': numberOfUnresolvedReports > 0 }">
+                            {{numberOfUnresolvedReports}} pending reports
+                        </a>
+                    </li>
+
+                    <!-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Dropdown
                         </a>
@@ -41,7 +48,7 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a>
                         </div>
-                    </li>
+                    </li> -->
 
                     <li class="nav-item dropdown">
                         <a class="nav-link" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -136,8 +143,13 @@
 </template>
 
 <script>
-    import {userLoggedIn, storeUserInformation, getUserAvatar} from "@/service/memberService";
-    import {getSelfUserInformation} from "@/service/api";
+    import {
+        userLoggedIn,
+        storeUserInformation,
+        getUserAvatar,
+        userPermissions,
+    } from "@/service/memberService";
+    import {getSelfUserInformation, getUnresolvedReportsCount} from "@/service/api";
     import Autocomplete from 'vuejs-auto-complete';
 
     import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -160,7 +172,10 @@
                 composeNewMessageInput: {
                     to: '',
                     content: ''
-                }
+                },
+
+                canSeeReportedPosts: userPermissions.canSeeReportedPosts,
+                numberOfUnresolvedReports: -1
             }
         },
 
@@ -169,6 +184,10 @@
                 this.loggedIn = data;
                 storeUserInformation(data);
             });
+        },
+
+        mounted() {
+            this.getUnresolvedReportsCount();
         },
 
         methods: {
@@ -187,6 +206,17 @@
 
             selectUser(data) {
                 console.log("Selected user " + data.selectedObject.name);
+            },
+
+            getUnresolvedReportsCount() {
+                getUnresolvedReportsCount(
+                    (response, error) => {
+                        setTimeout(() => this.getUnresolvedReportsCount(), 10000);
+                        if(error == null) {
+                            this.numberOfUnresolvedReports = response;
+                        }
+                    }
+                );
             }
         },
     }

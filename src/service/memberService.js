@@ -8,7 +8,9 @@ export const userLoggedIn = localStorage.authentication_token != null;
 
 export const userPermissions = {
     canCloseTopic: hasAnyRole(['ADMIN', 'MODERATOR']),
-    canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR'])
+    canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR']),
+    canReportPost: hasAnyRole(['ADMIN', 'MODERATOR', 'USER']),
+    canSeeReportedPosts: hasAnyRole(['ADMIN', 'MODERATOR'])
 };
 
 export const storeUserInformation = (userData) => {
