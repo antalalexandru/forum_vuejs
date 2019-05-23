@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <router-link class="navbar-brand" to="/">Licenţa lui alex</router-link>
+            <router-link class="navbar-brand" to="/">Board forums</router-link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -48,17 +48,28 @@
                             <i class="fas fa-envelope" style="color: #cc0000"></i>&nbsp;
                             <b style="color: #cc0000">(4)</b>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-center" aria-labelledby="navbarDropdown2" style="width: 400px;">
+                        <div class="dropdown-menu dropdown-menu-center" aria-labelledby="navbarDropdown2" style="width: 400px; padding: 10px;">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    Private messages
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                        Launch demo modal
+                                    </button>
+
+                                </div>
+                            </div>
                             <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <li style="border: none;" class="list-group-item d-flex justify-content-between align-items-center">
                                     Cras justo odio
                                     <span class="badge badge-primary badge-pill">14</span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Dapibus ac facilisis in
+                                <li style="border: none" class="list-group-item d-flex justify-content-between align-items-center">
+                                    Dapibus ac facilisis in<br />121
                                     <span class="badge badge-primary badge-pill">2</span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <li style="border: none" class="list-group-item d-flex justify-content-between align-items-center">
                                     Morbi leo risus
                                     <span class="badge badge-primary badge-pill">1</span>
                                 </li>
@@ -88,20 +99,68 @@
                 </ul>
             </div>
         </div>
+
+        <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Compose new message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Send to user</label>
+                            <autocomplete
+                                    input-class="form-control"
+                                    :source=getUsersData
+                                    @selected="selectUser"
+                            >
+                            </autocomplete>
+
+                        </div>
+
+                        <ckeditor class="form-control" id="details" :editor="editor" v-model="composeNewMessageInput.content"
+                                  :config="editorConfig"></ckeditor>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </nav>
 </template>
 
 <script>
     import {userLoggedIn, storeUserInformation, getUserAvatar} from "@/service/memberService";
     import {getSelfUserInformation} from "@/service/api";
+    import Autocomplete from 'vuejs-auto-complete';
+
+    import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
     export default {
         name: "Header",
 
+        components: {
+          Autocomplete
+        },
+
         data () {
             return {
                 loggedIn: localStorage.authentication_token != null,
-                userLoggedIn: userLoggedIn
+                userLoggedIn: userLoggedIn,
+
+                editor: ClassicEditor,
+
+                editorConfig: {},
+                composeNewMessageInput: {
+                    to: '',
+                    content: ''
+                }
             }
         },
 
@@ -113,6 +172,7 @@
         },
 
         methods: {
+
             getUserAvatar: getUserAvatar,
             logout: () => {
                 localStorage.removeItem('authentication_token');
@@ -120,6 +180,14 @@
                 localStorage.removeItem('role');
                 window.location.reload();
             },
+
+            getUsersData(input) {
+                return "http://localhost:8082/user/partial_user_search?username=" + input.trim();
+            },
+
+            selectUser(data) {
+                console.log("Selected user " + data.selectedObject.name);
+            }
         },
     }
 

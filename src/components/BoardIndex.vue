@@ -1,6 +1,9 @@
 <template>
     <div class="hello">
 
+        <h1 style="padding: 70px 0; font-family: 'Raleway'; text-align: center; font-weight: 200; font-size: 60px;">Licența lui alex</h1>
+
+
         <Breadcrumb></Breadcrumb>
 
         <div v-for="parentCategory in categoriesList" :key="parentCategory.id" style="margin-bottom: 20px;">
