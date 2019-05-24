@@ -17,6 +17,7 @@ import AccountSettings from "@/components/AccountSettings";
 import ForgotPasswordRequest from "@/components/ForgotPasswordRequest";
 import ResetPassword from "@/components/ResetPassword";
 import Reports from "@/components/Reports";
+import UserList from "@/components/UserList";
 
 Vue.use(Router);
 
@@ -127,6 +128,12 @@ export default new Router({
             path: '/reports',
             name: 'reports',
             component: Reports
+        },
+
+        {
+            path: '/users_list',
+            name: 'users_list',
+            component: UserList
         }
 
     ]

@@ -188,3 +188,11 @@ export const getReports = (handler) => {
         handler: handler,
     });
 };
+
+export const getReportDetails = (data, handler) => {
+    athenticatedRequest({
+        path: '/report/' + data.reportId,
+        method: 'get',
+        handler: handler,
+    });
+};
