@@ -67,8 +67,10 @@
             <tr v-for="(post, key, index) in posts" :key="post.id" style="width: 100%">
                 <td style="width: 250px; text-align: center; vertical-align: top">
                     <div style="font-size: 18px">{{post.author.username}}</div>
-                    <img :src="getUserAvatar(post.author.avatar)"
-                         style="max-width: 100px; border-radius: 50%; margin: 10px;">
+                    <div style="width: 90px; height: 90px; margin: 5px auto; border-radius: 2px;">
+                        <div :style="getAvatarStyle(post.author)"></div>
+                    </div>
+
                     <div v-html="getUserGroupFormatted(post.author.group)"></div>
                     <div>{{post.author.numberOfPosts}} posts</div>
                 </td>
@@ -315,6 +317,14 @@
 
             setPostIdToReport(postIdToReport) {
                 this.postIdToReport = postIdToReport;
+            },
+
+            getAvatarStyle(user) {
+                if(user == null || user.avatar == null || user.avatar.trim() === '') {
+                    return "border-radius: 2px; max-width: 90px;max-height: 90px;min-height: 80px;min-width: 45px;background: url('https://forum.softpedia.com//public/style_images/carbon_blue/profile/default_large.png') no-repeat;background-size:cover;background-position: center;";
+                } else {
+                    return "text-align: center; border-radius: 2px; max-width: 90px;max-height: 90px;min-height: 85px;min-width: 45px;background: url('" + user.avatar + "') no-repeat;background-size:cover;background-position: center;";
+                }
             },
 
             sendReport() {

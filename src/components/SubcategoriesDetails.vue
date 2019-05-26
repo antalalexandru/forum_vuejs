@@ -32,14 +32,17 @@
                 <td style="width: 11%; text-align: center; vertical-align: middle">
                     <span style='font-weight: 600'>{{category.numberOfPosts + category.numberOfTopics}}</span><br>posts
                 </td>
-                <td style="width: 25%; vertical-align: middle">
+                <td style="width: 50px; height: 50px; text-align: center; vertical-align: middle">
+                    <div v-if="category.lastPostUserDetails != null" :style="getAvatarStyle(category.lastPostUserDetails)"></div>
+                </td>
+                <td style="width: 20%; vertical-align: middle">
                     <div v-if="category.lastPostId">
                         {{category.lastPostTopicTitle}} <br>
                         By {{category.lastPostUserName}} <br>
                         {{formatTimestamp(category.lastPostTimeStamp)}}
                     </div>
                     <div v-else>
-                        <em>No last post information</em>
+                        <em>No last post info</em>
                     </div>
                 </td>
             </tr>
@@ -57,7 +60,14 @@
             'category'
         ],
         methods: {
-            formatTimestamp: formatTimestamp
+            formatTimestamp: formatTimestamp,
+            getAvatarStyle(user) {
+                if(user == null || user.avatar == null || user.avatar.trim() === '') {
+                    return "border-radius: 2px; width: 50px;height: 50px;background: url('https://forum.softpedia.com//public/style_images/carbon_blue/profile/default_large.png') no-repeat;background-size:cover;background-position: center;";
+                } else {
+                    return "border-radius: 2px; width: 50px;height: 50px;background: url('" + user.avatar + "') no-repeat;background-size:cover;background-position: center;";
+                }
+            }
         }
     }
 </script>

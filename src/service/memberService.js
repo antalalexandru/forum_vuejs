@@ -10,7 +10,8 @@ export const userPermissions = {
     canCloseTopic: hasAnyRole(['ADMIN', 'MODERATOR']),
     canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR']),
     canReportPost: hasAnyRole(['ADMIN', 'MODERATOR', 'USER']),
-    canSeeReportedPosts: hasAnyRole(['ADMIN', 'MODERATOR'])
+    canSeeReportedPosts: hasAnyRole(['ADMIN', 'MODERATOR']),
+    canWarnUsers: hasAnyRole(['ADMIN', 'MODERATOR'])
 };
 
 export const storeUserInformation = (userData) => {
@@ -92,17 +93,6 @@ export const getSelfUserInformation = (onsuccess) => {
     }
 };
 
-export const getUserById = (user_id, onsuccess) => {
-    if(localStorage.authentication_token) {
-        axios.get('http://localhost:8082/user/' + user_id)
-            .then(response => {
-                onsuccess(response.data);
-            })
-            .catch((err) => {
-                // TODO;
-            });
-    }
-};
 
 export const getUserAvatar = (avatar) => {
     if(avatar == null) {

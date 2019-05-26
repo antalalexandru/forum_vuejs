@@ -19,10 +19,10 @@ export const basicRequest = (request) => {
  * @param request
  * @returns {Promise<void>}
  */
-export const athenticatedRequest = (request) => {
+export const tryAthenticatedRequest = (request) => {
 
     if (localStorage.authentication_token == null) {
-        // handle this pls
+        basicRequest(request);
         return;
     }
 
@@ -51,6 +51,8 @@ export const athenticatedRequest = (request) => {
                 // console.log("buba", response);
                 if (response.data.error === 'invalid_token') {
 
+                    console.log("[~] invalid token");
+
                     let params = new URLSearchParams();
                     params.append('grant_type', 'refresh_token');
                     params.append('refresh_token', localStorage.refresh_token);
@@ -61,6 +63,7 @@ export const athenticatedRequest = (request) => {
                         }
                     })
                         .then(response => {
+                            console.log("[~] refresh token success");
                             localStorage.authentication_token = response.data.access_token;
                             localStorage.refresh_token = response.data.refresh_token;
                             localStorage.role = response.data.roles;
@@ -80,7 +83,7 @@ export const athenticatedRequest = (request) => {
                                     localStorage.removeItem('authentication_token');
                                     localStorage.removeItem('refresh_token');
                                     localStorage.removeItem('role');
-                                    //window.location.reload();
+                                    window.location.reload();
                                     console.log('Error reseding request after authorization');
                                 });
 
@@ -91,10 +94,10 @@ export const athenticatedRequest = (request) => {
                             // check if token refresh expired
                             let response = err.response;
                             if(response.status === 401 && response.data.error === 'invalid_token') {
-                                localStorage.removeItem('authentication_token');
-                                localStorage.removeItem('refresh_token');
-                                localStorage.removeItem('role');
-                                document.location.href = '/';
+                                 localStorage.removeItem('authentication_token');
+                                 localStorage.removeItem('refresh_token');
+                                 localStorage.removeItem('role');
+                                 document.location.href = '/';
                             }
                             console.log(JSON.stringify(response));
                             console.log('Check refresh token expire');
@@ -128,7 +131,7 @@ export const activateUserAccount = (data, handler) => {
 };
 
 export const getSelfUserInformation = (handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/user/me',
         method: 'get',
         handler: handler
@@ -136,7 +139,7 @@ export const getSelfUserInformation = (handler) => {
 };
 
 export const changeCurrentPassword = (data, handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/user/change_password',
         method: 'patch',
         handler: handler,
@@ -165,7 +168,7 @@ export const resetPassword = (data, handler) => {
 };
 
 export const sendReport = (data, handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/report',
         method: 'post',
         handler: handler,
@@ -174,7 +177,7 @@ export const sendReport = (data, handler) => {
 };
 
 export const getUnresolvedReportsCount = (handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/report/unresolved',
         method: 'get',
         handler: handler,
@@ -182,7 +185,7 @@ export const getUnresolvedReportsCount = (handler) => {
 };
 
 export const getReports = (handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/report',
         method: 'get',
         handler: handler,
@@ -190,9 +193,58 @@ export const getReports = (handler) => {
 };
 
 export const getReportDetails = (data, handler) => {
-    athenticatedRequest({
+    tryAthenticatedRequest({
         path: '/report/' + data.reportId,
         method: 'get',
         handler: handler,
+    });
+};
+
+export const editReportStatus = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/report?report_id=' + data.reportId + '&status=' + data.status,
+        method: 'patch',
+        handler: handler,
+    });
+};
+
+export const getUsers = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user?page=' + (data.page == null ? 1 : data.page),
+        method: 'get',
+        handler: handler
+    });
+};
+
+export const getCategories = (handler) => {
+    basicRequest({
+        path: '/category',
+        method: 'get',
+        handler: handler
+    });
+};
+
+export const getCategory = (data, handler) => {
+    basicRequest({
+        path: '/category/' + data.category_id,
+        method: 'get',
+        handler: handler
+    });
+};
+
+export const getUserById = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user/' + data.user_id,
+        method: 'get',
+        handler: handler
+    });
+};
+
+export const sendWarnRequest = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user/warn',
+        method: 'post',
+        handler: handler,
+        data: data
     });
 };

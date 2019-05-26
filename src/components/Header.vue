@@ -36,9 +36,7 @@
                 <ul class="navbar-nav form-inline my-2 my-lg-0" v-if="this.loggedIn">
 
                     <li class="nav-item" v-if="canSeeReportedPosts && numberOfUnresolvedReports >= 0">
-                        <a class="nav-link" href="#" v-bind:class="{ 'text-danger': numberOfUnresolvedReports > 0 }">
-                            {{numberOfUnresolvedReports}} pending reports
-                        </a>
+                        <router-link to="/reports" class="nav-link" v-bind:class="{ 'text-danger': numberOfUnresolvedReports > 0 }">{{numberOfUnresolvedReports}} pending reports</router-link>
                     </li>
 
                     <!-- <li class="nav-item dropdown">
@@ -190,7 +188,9 @@
         },
 
         mounted() {
-            this.getUnresolvedReportsCount();
+            if(userPermissions.canSeeReportedPosts) {
+                this.getUnresolvedReportsCount();
+            }
         },
 
         methods: {

@@ -61,7 +61,6 @@
 
 <script>
     import {userLoggedIn} from "../service/memberService";
-    import {getCategory} from "../service/categoriesService";
     import {formatTimestamp} from "@/service/utils";
 
 
@@ -71,6 +70,7 @@
     import Pagination from "@/components/Pagination";
     import SubcategoriesDetails from "@/components/SubcategoriesDetails";
     import Breadcrumb from "@/components/Breadcrumb";
+    import {getCategory} from "@/service/api";
 
 
     export default {
@@ -114,32 +114,30 @@
         },
 
         mounted() {
-            let onSuccessCategories = (response) => {
-                this.categoryData = response.data;
+            getCategory({
+                category_id: this.category_id
+            }, (response, err) => {
+                if(err == null) {
+                    this.categoryData = response;
 
-                let parentCategory = this.categoryData.parentCategoryDetails;
-                let parentCategories = [{
-                    id: this.categoryData.id,
-                    name: this.categoryData.name,
-                    link: { name: 'category_details', params: { category_id: this.categoryData.id } }
-                }];
-                while(parentCategory != null) {
-                    parentCategories.push({
-                        id: parentCategory.id,
-                        name: parentCategory.name,
-                        link: { name: 'category_details', params: { category_id: parentCategory.id } }
-                    });
-                    parentCategory = parentCategory.parentCategory;
+                    let parentCategory = this.categoryData.parentCategoryDetails;
+                    let parentCategories = [{
+                        id: this.categoryData.id,
+                        name: this.categoryData.name,
+                        link: {name: 'category_details', params: {category_id: this.categoryData.id}}
+                    }];
+                    while (parentCategory != null) {
+                        parentCategories.push({
+                            id: parentCategory.id,
+                            name: parentCategory.name,
+                            link: {name: 'category_details', params: {category_id: parentCategory.id}}
+                        });
+                        parentCategory = parentCategory.parentCategory;
+                    }
+
+                    this.breadcrumbElements = parentCategories.reverse();
                 }
-
-                this.breadcrumbElements = parentCategories.reverse();
-
-            };
-            let onErrorCategories = (data) => {
-
-            };
-
-            getCategory(this.category_id, onSuccessCategories, onErrorCategories);
+            });
 
             this.loadTopics();
         }

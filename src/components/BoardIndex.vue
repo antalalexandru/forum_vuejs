@@ -28,12 +28,12 @@
 </template>
 
 <script>
-    import {getCategories} from "@/service/categoriesService";
     import {formatTimestamp} from "@/service/utils";
     import SubcategoriesDetails from "@/components/SubcategoriesDetails";
 
     import {getCommunityStatistics} from "@/service/statisticsService";
     import Breadcrumb from "@/components/Breadcrumb";
+    import {getCategories} from "@/service/api";
 
     export default {
         name: 'Categories',
@@ -64,17 +64,15 @@
         },
 
         created() {
-            let onSuccessCategories = (response) => {
-                this.categoriesList = response.data;
-            };
-            let onErrorCategories = (data) => {
-            };
-            getCategories(onSuccessCategories, onErrorCategories);
+            getCategories((response, err) => {
+                if(err == null) {
+                    this.categoriesList = response;
+                }
+            });
 
             getCommunityStatistics((response, error) => {
                 if (error == null) {
                     this.statistics = response;
-                    console.log(this.statistics);
                 }
             });
         }

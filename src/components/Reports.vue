@@ -27,7 +27,7 @@
 
         <div class="modal fade reportModal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content" v-if="this.selectedReportDetails !== {}">
+                <div class="modal-content" v-if="selectedReportDetails !== false">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Report #{{this.selectedReportDetails.reportId}} details</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -38,11 +38,15 @@
                         Reported by {{this.selectedReportDetails.authorName}} regarding {{this.selectedReportDetails.postDetails.author.username}}'s post.
                         <br />
                         Reported post content:
-                        <div v-html="this.selectedReportDetails.postDetails.content"></div>
+                        <div v-html="selectedReportDetails.postDetails.content"></div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+
+                        <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="editReportStatus('COMPLETE')" v-if="this.selectedReportDetails.status === 'NEW'">Mark as complete</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="editReportStatus('NEW')" v-else>Mark as new</button>
+
                     </div>
                 </div>
             </div>
@@ -54,13 +58,14 @@
 <script>
     import {getReportDetails, getReports} from "../service/api";
     import {formatTimestamp} from "../service/utils";
+    import {editReportStatus} from "@/service/api";
 
     export default {
         name: "Reports",
         data() {
             return {
                 reports: [],
-                selectedReportDetails: {}
+                selectedReportDetails: false
             }
         },
         methods: {
@@ -77,6 +82,22 @@
                 }, (response, error) => {
                     if(error == null) {
                         this.selectedReportDetails = response;
+                    }
+                });
+            },
+            editReportStatus(status) {
+                editReportStatus({
+                    reportId: this.selectedReportDetails.reportId,
+                    status: status
+                }, (success, err) => {
+                    if(err == null) {
+                        for(let i = 0; i < this.reports.length; i++) {
+                            if(this.reports[i].reportId === this.selectedReportDetails.reportId) {
+                                this.reports[i].status = status;
+                                this.selectedReportDetails.status = status;
+                                break;
+                            }
+                        }
                     }
                 });
             }
