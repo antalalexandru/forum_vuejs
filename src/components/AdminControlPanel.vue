@@ -96,8 +96,15 @@
                         </td>
                         <td style="vertical-align: middle">{{user.username}}</td>
                         <td style="vertical-align: middle">{{user.email}}</td>
-                        <td style="vertical-align: middle"><div v-html="getUserGroupFormatted(user.group)" style="display: inline"></div></td>
-                        <td style="vertical-align: middle; text-align: right"><i class="fas fa-edit" style="color: #bcbcbc; border-radius: 4px;"></i></td>
+                        <td style="vertical-align: middle">
+
+                            <!-- <div v-html="getUserGroupFormatted(user.group)" style="display: inline"></div> -->
+
+                            <select class="form-control" v-model="selectedGroup[user.id]" v-on:change="handleUpdateUserGroup(user.id)">
+                                <option v-for="group in groupList" v-bind:key="group.id" v-bind:value=group.id>{{group.name}}</option>
+                            </select>
+
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -110,7 +117,15 @@
 
 <script>
     import draggable from 'vuedraggable';
-    import {addNewCategory, getCategoriesByParent, getCategory, getUsers, updateCategoriesRank} from "@/service/api";
+    import {
+        addNewCategory,
+        getCategoriesByParent,
+        getCategory,
+        getGroups,
+        getUsers,
+        updateCategoriesRank,
+        updateUserGroup
+    } from "@/service/api";
     import Pagination from "@/components/Pagination";
     import {getUserGroupFormatted} from "@/service/utils";
 
@@ -145,7 +160,9 @@
                 totalUsersPages: 1,
                 loadingUsersPage: true,
 
-                usersList: []
+                usersList: [],
+                groupList: [],
+                selectedGroup: {}
             };
         },
         methods: {
@@ -239,6 +256,11 @@
                     if(error == null) {
                         this.usersList = response.elements;
                         this.totalUsersPages = response.totalPages;
+
+                        for(let user of this.usersList) {
+                            this.selectedGroup[user.id] = user.group.id;
+                        }
+
                     }
                 });
             },
@@ -258,11 +280,56 @@
                 this.loadUsers();
             },
 
+            handleUpdateUserGroup: function(userId) {
+
+                let updatingUserToaster = this.$toasted.show("Updating user ...", {
+                    theme: "toasted-primary",
+                    position: "top-center",
+                    duration : 1000,
+                    type: 'info',
+                    iconPack: 'fontawesome',
+                    icon: 'info'
+                });
+
+                updateUserGroup({
+                    group_id: this.selectedGroup[userId],
+                    user_id: userId
+                }, (response, error) => {
+                    updatingUserToaster.goAway(0);
+                    if(error == null) {
+                        this.$toasted.show("User succesfully updated", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 1000,
+                            type: 'success',
+                            iconPack: 'fontawesome',
+                            icon: 'check'
+                        });
+                    } else {
+                        this.$toasted.show("Error updating user", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 2000,
+                            type: 'error',
+                            iconPack: 'fontawesome',
+                            icon: 'info'
+                        });
+                    }
+                });
+
+            }
+
         },
 
         created() {
             this.loadCategories();
             this.loadUsers();
+
+            getGroups((response, err) => {
+                if(err == null) {
+                    this.groupList = response;
+                }
+            });
         }
     }
 </script>

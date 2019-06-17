@@ -337,3 +337,20 @@ export const addNewCategory = (data, handler) => {
         data: data
     });
 };
+
+export const getGroups = (handler) => {
+    basicRequest({
+        path: '/group',
+        method: 'get',
+        handler: handler,
+    });
+};
+
+export const updateUserGroup = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user/' + data.user_id + '/update_group/' + data.group_id,
+        method: 'patch',
+        handler: handler,
+        data: data
+    });
+};

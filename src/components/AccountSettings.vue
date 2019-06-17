@@ -85,7 +85,7 @@
 
 <script>
 
-    import {changeCurrentPassword, updateUserProfile} from "@/service/api";
+    import {changeCurrentPassword, updateUserProfile, getGroups} from "@/service/api";
 
     import DatePicker from 'vue2-datepicker'
 
@@ -129,9 +129,10 @@
                 accountSuccessfullyChanged: false,
                 errorUpdatingProfile: false,
 
-                invalidNewPasswordMessage: ''
+                invalidNewPasswordMessage: '',
             }
         },
+
         methods: {
 
             updateProfile() {
