@@ -13,6 +13,7 @@
             <ckeditor class="form-control" id="details" :editor="editor" v-model="input.content" :config="editorConfig"></ckeditor>
         </div>
 
+
         <div style="text-align: right; margin-top: 15px;">
             <button type="button" class="btn btn-secondary" v-on:click="addTopic" :disabled="disableAddButton">
                 <i class="fas fa-plus-circle"></i> Add new topic
@@ -29,6 +30,7 @@
 
     export default {
         name: "AddNewTopic",
+
 
         data() {
             return {

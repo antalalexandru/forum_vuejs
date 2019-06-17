@@ -8,7 +8,9 @@ import Autocomplete from 'vuejs-auto-complete';
 Vue.config.productionTip = false;
 
 import Toasted from 'vue-toasted';
+import Sortable from 'vue-sortable';
 
+Vue.use(Sortable);
 Vue.use(Toasted);
 
 Vue.use( CKEditor );
@@ -16,7 +18,7 @@ Vue.use(Notifications);
 Vue.use(VueSwal);
 Vue.use(Autocomplete);
 
-new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
+// new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
 
 
 /*

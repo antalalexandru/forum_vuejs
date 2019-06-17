@@ -16,7 +16,7 @@
             </div>
             <ul style="padding: 0; margin: 0;  list-style-type: none;">
                 <li style="display: inline;">
-                    <i class="fas fa-home" style="margin-right: 7px;"></i> <router-link :to="{ name: 'board_index'}">Community Home</router-link>
+                    <router-link :to="{ name: 'board_index'}"><i class="fas fa-home"></i> Home</router-link>
                 </li>
                 <li v-for="item in items" :key="item.name" style="display: inline;">
                     <i class="fas fa-angle-right" style="margin: 0 7px;"></i>

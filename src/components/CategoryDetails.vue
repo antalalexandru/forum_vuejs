@@ -10,51 +10,63 @@
         </div>
 
         <Breadcrumb
-            :items="this.breadcrumbElements"
+                :items="this.breadcrumbElements"
         ></Breadcrumb>
 
         <div v-if="this.categoryData.childCategories && this.categoryData.childCategories.length > 0">
             <div class="maintitle">Subcategories</div>
             <SubcategoriesDetails
-                :category="this.categoryData"
+                    :category="this.categoryData"
             />
         </div>
 
-        <div style="text-align: right; margin: 20px 0" v-if="userLoggedIn">
-            <router-link :to="{ name: 'add_new_topic', params: { category_id: category_id } }">
-                <button type="button" class="btn btn-light"><i class="fas fa-plus-circle"></i> Add new topic</button>
-            </router-link>
+        <div v-if="categoryData.allowPosting">
+
+            <div style="text-align: right; margin: 20px 0" v-if="userLoggedIn">
+                <router-link :to="{ name: 'add_new_topic', params: { category_id: category_id } }">
+                    <button type="button" class="btn btn-light"><i class="fas fa-plus-circle"></i> Add new topic
+                    </button>
+                </router-link>
+            </div>
+
+            <Pagination
+                    :current_page="current_page"
+                    :total_pages="total_pages"
+                    :changePage="changePage"
+            />
+
+            <div style="text-align: center">
+                <loading :active.sync="loading_topics"
+                         :can-cancel="false"
+                         :is-full-page="true"
+                         style="margin: 20px;"
+                ></loading>
+            </div>
+
+            <table class="table table-striped" style="border: 1px solid #ddd">
+                <tbody>
+                <tr v-for="topic in this.topics" :key="topic.id">
+                    <td>
+                        <div>
+                            <router-link :to="{ name: 'topic_details', params: { topic_id: topic.id } }">
+                                {{topic.title}}
+                            </router-link>
+                        </div>
+                        <div style="color: #888;">Started by {{topic.firstPostUserName}},
+                            {{formatTimestamp(topic.firstPostTimeStamp)}}
+                        </div>
+                    </td>
+                    <td style="vertical-align: middle">
+                        {{topic.replies}} posts
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <div>{{topic.lastPostUserName}}</div>
+                        <div style="color: #888;">{{formatTimestamp(topic.lastPostTimeStamp)}}</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-
-        <Pagination
-                :current_page="current_page"
-                :total_pages="total_pages"
-                :changePage="changePage"
-        />
-
-        <table class="table table-striped" style="border: 1px solid #ddd">
-            <tbody>
-            <tr v-for="topic in this.topics" :key="topic.id">
-                <td>
-                    <div>
-                        <router-link :to="{ name: 'topic_details', params: { topic_id: topic.id } }">
-                            {{topic.title}}
-                        </router-link>
-                    </div>
-                    <div style="color: #888;">Started by {{topic.firstPostUserName}},
-                        {{formatTimestamp(topic.firstPostTimeStamp)}}
-                    </div>
-                </td>
-                <td style="vertical-align: middle">
-                    {{topic.replies}} posts
-                </td>
-                <td style="vertical-align: middle;">
-                    <div>{{topic.lastPostUserName}}</div>
-                    <div style="color: #888;">{{formatTimestamp(topic.lastPostTimeStamp)}}</div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
 
     </div>
 </template>
@@ -62,6 +74,7 @@
 <script>
     import {userLoggedIn} from "../service/memberService";
     import {formatTimestamp} from "@/service/utils";
+    import Loading from 'vue-loading-overlay';
 
 
     import {getTopicsByCategoryId} from "@/service/topicsService";
@@ -70,12 +83,12 @@
     import Pagination from "@/components/Pagination";
     import SubcategoriesDetails from "@/components/SubcategoriesDetails";
     import Breadcrumb from "@/components/Breadcrumb";
-    import {getCategory} from "@/service/api";
+    import {getCategory, getCategoryHierarchy} from "@/service/api";
 
 
     export default {
         name: "CategoryDetails",
-        components: {Pagination, SubcategoriesDetails, Breadcrumb},
+        components: {Pagination, SubcategoriesDetails, Breadcrumb, Loading},
         data() {
             return {
                 categoryData: {},
@@ -86,7 +99,9 @@
                 current_page: this.$route.query.page == null ? 1 : parseInt(this.$route.query.page),
                 total_pages: 1,
 
-                breadcrumbElements: []
+                breadcrumbElements: [],
+
+                loading_topics: true
             }
         },
 
@@ -94,11 +109,14 @@
             formatTimestamp: formatTimestamp,
 
             loadTopics() {
+                this.loading_topics = true;
                 let onSuccessTopics = (response) => {
+                    this.loading_topics = false;
                     this.topics = response.data.elements;
                     this.total_pages = response.data.totalPages;
                 };
                 let onErrorTopics = (err) => {
+                    this.loading_topics = false;
                     console.log(err);
                 };
 
@@ -114,28 +132,30 @@
         },
 
         mounted() {
+            getCategoryHierarchy({
+                category_id: this.category_id
+            }, (response, err) => {
+                if (err == null) {
+                    let currentCategory = response;
+                    let parentCategories = [];
+                    while (currentCategory != null) {
+                        parentCategories.push({
+                            id: currentCategory.id,
+                            name: currentCategory.name,
+                            link: {name: 'category_details', params: {category_id: currentCategory.id}}
+                        });
+                        currentCategory = currentCategory.parentCategory;
+                    }
+                    this.breadcrumbElements = parentCategories.reverse();
+                }
+            });
+
             getCategory({
                 category_id: this.category_id
             }, (response, err) => {
-                if(err == null) {
+                if (err == null) {
                     this.categoryData = response;
-
-                    let parentCategory = this.categoryData.parentCategoryDetails;
-                    let parentCategories = [{
-                        id: this.categoryData.id,
-                        name: this.categoryData.name,
-                        link: {name: 'category_details', params: {category_id: this.categoryData.id}}
-                    }];
-                    while (parentCategory != null) {
-                        parentCategories.push({
-                            id: parentCategory.id,
-                            name: parentCategory.name,
-                            link: {name: 'category_details', params: {category_id: parentCategory.id}}
-                        });
-                        parentCategory = parentCategory.parentCategory;
-                    }
-
-                    this.breadcrumbElements = parentCategories.reverse();
+                    document.title = 'View category ' + this.categoryData.name;
                 }
             });
 

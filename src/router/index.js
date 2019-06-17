@@ -18,6 +18,8 @@ import ForgotPasswordRequest from "@/components/ForgotPasswordRequest";
 import ResetPassword from "@/components/ResetPassword";
 import Reports from "@/components/Reports";
 import UserList from "@/components/UserList";
+import Search from "@/components/Search";
+import AdminControlPanel from "@/components/AdminControlPanel";
 
 Vue.use(Router);
 
@@ -134,6 +136,18 @@ export default new Router({
             path: '/users_list',
             name: 'users_list',
             component: UserList
+        },
+
+        {
+            path: '/search',
+            name: 'search',
+            component: Search
+        },
+
+        {
+            path: '/admincp',
+            name: 'admincp',
+            component: AdminControlPanel
         }
 
     ]

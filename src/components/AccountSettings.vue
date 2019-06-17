@@ -7,9 +7,6 @@
                     <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
                         <i class="fas fa-users-cog"></i> Profile settings
                     </a>
-                    <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">
-                        <i class="fas fa-envelope"></i> Email settings
-                    </a>
                     <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">
                         <i class="fas fa-key"></i> Change password
                     </a>
@@ -18,18 +15,43 @@
             <div class="col-9">
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                        <div class="form-group">
-                            <label for="usernameInput">Avatar URL</label>
-                            <input type="text" class="form-control" id="usernameInput" v-model="input.avatar">
+
+                        <div class="alert alert-success" role="alert" v-if="this.accountSuccessfullyChanged">
+                            Account updated succesfully
                         </div>
+                        <div class="alert alert-danger" role="alert" v-if="this.errorUpdatingProfile">
+                            There was an error processing the request. Please try again later.
+                        </div>
+
+                        <div class="form-group">
+                            <label for="avatarInput">Avatar URL</label>
+                            <input type="text" class="form-control" id="avatarInput" v-model="input.editProfile.avatar">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userTitleInput">User title</label>
+                            <input type="text" class="form-control" id="userTitleInput" v-model="input.editProfile.userTitle">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Birthday</label><br />
+                            <date-picker v-model="input.editProfile.birthday" input-class="form-control" lang="en" type="date" confirm="true" format="YYYY-MM-DD" first-day-of-week="1"></date-picker>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locationInput">Location</label>
+                            <input type="text" class="form-control" id="locationInput" v-model="input.editProfile.location">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" v-on:click="updateProfile()">Update profile</button>
+
                     </div>
-                    <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">123</div>
                     <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
                         <div class="alert alert-success" role="alert" v-if="this.passwordSuccessfullyChanged">
                             Password changed succesfully
                         </div>
                         <div class="alert alert-danger" role="alert" v-if="this.errorProcessingPasswordChangeRequest">
-                            There was an error processing the request. Please try again later.
+                            There was an error processing the request.
                         </div>
                         <div class="form-group">
                             <label for="currentPasswordInput">Current password</label>
@@ -63,14 +85,32 @@
 
 <script>
 
-    import {changeCurrentPassword} from "@/service/api";
+    import {changeCurrentPassword, updateUserProfile} from "@/service/api";
+
+    import DatePicker from 'vue2-datepicker'
+
 
     export default {
         name: "AccountSettings",
+        components: {
+            DatePicker
+        },
         data() {
+
+            let selfUser = JSON.parse(localStorage.selfUser);
+
             return {
                 input: {
                     avatar: '',
+
+                    birthday: '',
+
+                    editProfile: {
+                        avatar: selfUser.avatar != null ? selfUser.avatar : '',
+                        birthday: selfUser.birthday != null ? selfUser.birthday : '',
+                        location: selfUser.location != null ? selfUser.location : '',
+                        userTitle: selfUser.userTitle != null ? selfUser.userTitle : '',
+                    },
 
                     changePassword: {
                         currentPassword: '',
@@ -86,10 +126,53 @@
                 invalidNewPassword: false,
                 passwordsMismatch: false,
 
+                accountSuccessfullyChanged: false,
+                errorUpdatingProfile: false,
+
                 invalidNewPasswordMessage: ''
             }
         },
         methods: {
+
+            updateProfile() {
+                let userTitle = this.input.editProfile.userTitle.trim();
+                if(userTitle.length === 0) {
+                    userTitle = null;
+                }
+
+                let location = this.input.editProfile.location.trim();
+                if(location.length === 0) {
+                    location = null;
+                }
+
+                let avatar = this.input.editProfile.avatar.trim();
+                if(avatar.length === 0) {
+                    avatar = null;
+                }
+
+                let birthday = this.input.editProfile.birthday;
+                if(birthday === '') {
+                    birthday = null;
+                }
+
+                this.accountSuccessfullyChanged = false;
+                this.errorUpdatingProfile = false;
+
+                updateUserProfile({
+                    avatar: avatar,
+                    userTitle: userTitle,
+                    birthday: birthday,
+                    location: location
+                }, (response, err) => {
+                    if(err == null) {
+                        this.accountSuccessfullyChanged = true;
+                    } else {
+                        this.errorUpdatingProfile = true;
+                    }
+                });
+
+            },
+
             changePassword() {
 
                 let currentPassword = this.input.changePassword.currentPassword;

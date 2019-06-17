@@ -27,14 +27,13 @@ export const tryAthenticatedRequest = (request) => {
     }
 
     if (request.headers) {
-        request.headers.push({
-            "Authorization": "Bearer " + localStorage.authentication_token
-        });
+        request.headers.Authorization = "Bearer " + localStorage.authentication_token
     } else {
         request.headers = {
             "Authorization": "Bearer " + localStorage.authentication_token
         };
     }
+
 
     axios.request({
         url: resourcesServerUrl + request.path,
@@ -78,6 +77,7 @@ export const tryAthenticatedRequest = (request) => {
                             })
                                 .then(response => {
                                     request.handler(response.data);
+                                    // window.location.reload();
                                 })
                                 .catch(() => {
                                     localStorage.removeItem('authentication_token');
@@ -89,18 +89,13 @@ export const tryAthenticatedRequest = (request) => {
 
                         })
                         .catch((err) => {
-                            // send to login
-                            //document.location.href = '/';
-                            // check if token refresh expired
                             let response = err.response;
-                            if(response.status === 401 && response.data.error === 'invalid_token') {
+                            if(response.status === 400 && response.data.error === 'invalid_grant') {
                                  localStorage.removeItem('authentication_token');
                                  localStorage.removeItem('refresh_token');
                                  localStorage.removeItem('role');
                                  document.location.href = '/';
                             }
-                            console.log(JSON.stringify(response));
-                            console.log('Check refresh token expire');
                         });
                 }
             } else {
@@ -224,9 +219,25 @@ export const getCategories = (handler) => {
     });
 };
 
+export const getCategoriesByParent = (data, handler) => {
+    basicRequest({
+        path: '/category' + (data.category_id === 0 ? '' : '/' + data.category_id),
+        method: 'get',
+        handler: handler
+    });
+};
+
 export const getCategory = (data, handler) => {
     basicRequest({
         path: '/category/' + data.category_id,
+        method: 'get',
+        handler: handler
+    });
+};
+
+export const getCategoryHierarchy = (data, handler) => {
+    basicRequest({
+        path: '/category/' + data.category_id + '/hierarchy',
         method: 'get',
         handler: handler
     });
@@ -243,6 +254,84 @@ export const getUserById = (data, handler) => {
 export const sendWarnRequest = (data, handler) => {
     tryAthenticatedRequest({
         path: '/user/warn',
+        method: 'post',
+        handler: handler,
+        data: data
+    });
+};
+
+
+export const likePost = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/post/' + data.postId + '/like',
+        method: 'patch',
+        handler: handler,
+    });
+};
+
+export const unlikePost = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/post/' + data.postId + '/unlike',
+        method: 'patch',
+        handler: handler,
+    });
+};
+
+export const markPostAsDeleted = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/post/' + data.postId,
+        method: 'delete',
+        handler: handler,
+    });
+};
+
+
+export const getLastPostsByUserId = (userId, handler) => {
+    basicRequest({
+        path: '/post/by_user/' + userId,
+        method: 'get',
+        handler: handler,
+    });
+};
+
+export const getUserWarnHistory = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user/warn/' + data.userId,
+        method: 'get',
+        handler: handler,
+    });
+};
+
+export const searchPosts = (data, handler) => {
+    basicRequest({
+        path: '/post/search?query=' + data.query,
+        method: 'get',
+        handler: handler,
+    });
+};
+
+
+export const updateUserProfile = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/user/update_profile',
+        method: 'patch',
+        handler: handler,
+        data: data
+    });
+};
+
+export const updateCategoriesRank = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/category/rank',
+        method: 'patch',
+        handler: handler,
+        data: data
+    });
+};
+
+export const addNewCategory = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/category',
         method: 'post',
         handler: handler,
         data: data

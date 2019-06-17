@@ -11,7 +11,10 @@ export const userPermissions = {
     canEditTopicPost: hasAnyRole(['ADMIN', 'MODERATOR']),
     canReportPost: hasAnyRole(['ADMIN', 'MODERATOR', 'USER']),
     canSeeReportedPosts: hasAnyRole(['ADMIN', 'MODERATOR']),
-    canWarnUsers: hasAnyRole(['ADMIN', 'MODERATOR'])
+    canWarnUsers: hasAnyRole(['ADMIN', 'MODERATOR']),
+    canDeletePosts: hasAnyRole(['ADMIN', 'MODERATOR']),
+
+    isAdmin: hasAnyRole(['ADMIN'])
 };
 
 export const storeUserInformation = (userData) => {

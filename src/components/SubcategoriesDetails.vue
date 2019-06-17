@@ -37,8 +37,10 @@
                 </td>
                 <td style="width: 20%; vertical-align: middle">
                     <div v-if="category.lastPostId">
-                        {{category.lastPostTopicTitle}} <br>
-                        By {{category.lastPostUserName}} <br>
+                        <router-link
+                                :to="{ name: 'topic_details', params: { topic_id: category.lastPostTopicId } }">
+                            {{category.lastPostTopicTitle}}</router-link> <br>
+                        By <router-link :to="{ name: 'user_profile', params: { user_id: category.lastPostUserDetails.id } }">{{category.lastPostUserDetails.username}}</router-link> <br>
                         {{formatTimestamp(category.lastPostTimeStamp)}}
                     </div>
                     <div v-else>

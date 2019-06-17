@@ -9,10 +9,11 @@
                 Created by {{this.topic_details.firstPostUserName}},
                 {{formatTimestamp(this.topic_details.firstPostTimeStamp)}}
             </div>
-            <div>
-                {{this.topic_details.replies}} posts
-            </div>
         </div>
+
+        <Breadcrumb
+                :items="this.breadcrumbElements"
+        ></Breadcrumb>
 
         <hr>
         <div style="text-align: right; margin: 10px 0">
@@ -33,7 +34,6 @@
                 <button type="button" class="btn btn-link" style="margin-right: 10px; color: #555"
                         v-on:click="openTopic" v-else><i class="fas fa-lock-open"></i> Open topic
                 </button>
-
             </div>
 
             <div class="d-inline-block">
@@ -61,18 +61,27 @@
             :changePage="changePage"
         />
 
-        <table class="table table-striped" style="width: 100%; margin-bottom: none">
+        <div style="text-align: center">
+            <loading :active.sync="loading_posts"
+                     :can-cancel="false"
+                     :is-full-page="true"
+                     style="margin: 20px;"
+            ></loading>
+        </div>
+
+        <table class="table table-striped" style="width: 100%; margin-bottom: 0">
             <!-- <transition-group name="list" tag="tbody"> -->
             <tbody>
             <tr v-for="(post, key, index) in posts" :key="post.id" style="width: 100%">
                 <td style="width: 250px; text-align: center; vertical-align: top">
-                    <div style="font-size: 18px">{{post.author.username}}</div>
+                    <div style="font-size: 18px; line-height: 1.8"><router-link :to="{ name: 'user_profile', params: { user_id: post.author.id } }">{{post.author.username}}</router-link></div>
                     <div style="width: 90px; height: 90px; margin: 5px auto; border-radius: 2px;">
-                        <div :style="getAvatarStyle(post.author)"></div>
+                        <router-link :to="{ name: 'user_profile', params: { user_id: post.author.id } }"><div :style="getAvatarStyle(post.author)"></div></router-link>
                     </div>
 
-                    <div v-html="getUserGroupFormatted(post.author.group)"></div>
-                    <div>{{post.author.numberOfPosts}} posts</div>
+                    <div v-html="getUserGroupFormatted(post.author.group)" style="line-height: 1.5"></div>
+                    <div style="color: #555; font-size: 14px; line-height: 1.3">{{post.author.numberOfPosts}} posts</div>
+                    <div style="color: #555; font-size: 14px; line-height: 1.3">{{post.author.reputation}} likes</div>
                 </td>
                 <td style="padding-left: 10px; vertical-align: top;">
                     <div style="color: #888; font-size: 13px; margin-bottom: 10px;">
@@ -107,23 +116,29 @@
                         </div>
                     </div>
 
-
-                    <div style="color: #888; font-size: 13px; margin-top: 10px; text-align: right">
+                    <div style="color: #888; font-size: 13px;float: right">
                         <ul>
                             <li v-on:click="setPostIdToReport(post.id)" v-if="userPermissions.canReportPost" style="display:inline; padding: 10px; cursor: pointer" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-exclamation-triangle"></i> Report</li>
-                            <li style="display:inline; padding: 10px;"
-                                v-if="!(current_page === 1 && post.id === posts[0].id)"><i class="fas fa-times-circle"></i> Delete
+                            <li style="display:inline; padding: 10px; cursor: pointer"
+                                v-on:click="markPostAsDeleted(post.id)"
+                                v-if="!(current_page === 1 && post.id === posts[0].id) && userPermissions.canDeletePosts"><i class="fas fa-times-circle"></i> Delete
                             </li>
                             <li style="display:inline; padding: 10px; cursor: pointer" v-if="userPermissions.canEditTopicPost" v-on:click="setEditPostMode(post, index)"><i class="fas fa-edit"></i> Edit</li>
-                            <li style="display:inline; padding: 10px;"><i class="fas fa-comment-alt"></i> Quote</li>
 
                         </ul>
                     </div>
 
-                    <hr>
-
-                    <div style="font-size: 12px">
-                        <em>User signature</em>
+                    <div style="color: #444; font-size: 13px; margin-top: 10px;">
+                        <span v-if="isLoggedIn">
+                            <span v-if=" ! alreadyLikedPost(post)" style="color: #0364B4; padding: 3px; border-radius: 3px; cursor: pointer" v-on:click="likePost(post.id)">
+                                <i class="far fa-thumbs-up"></i> Like
+                            </span>
+                            <span v-else style="color: #cc0000; padding: 3px; border-radius: 3px; cursor: pointer" v-on:click="unlikePost(post.id)">
+                                <i class="far fa-thumbs-down"></i> Unlike
+                            </span>
+                            &nbsp;
+                        </span>
+                        {{getPostLikes(post)}}
                     </div>
 
                 </td>
@@ -176,33 +191,37 @@
 
 <script>
     import {
-        getTopicById,
-        getPostsByTopicId,
         addPostToTopic,
-        setTopicClosedStatus,
-        editTopicPost
+        editTopicPost,
+        getPostsByTopicId,
+        getTopicById,
+        setTopicClosedStatus
     } from "../service/topicsService";
 
-    import {
-        formatTimestamp,
-        getUserGroupFormatted,
-    } from "@/service/utils";
+    import {formatTimestamp, getUserGroupFormatted,} from "@/service/utils";
 
-    import {userPermissions, getUserAvatar} from "@/service/memberService";
+    import {getUserAvatar, userPermissions} from "@/service/memberService";
 
     import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
     import Pagination from "@/components/Pagination";
 
-    import {sendReport} from "@/service/api";
+    import {likePost, sendReport, unlikePost, markPostAsDeleted, getCategoryHierarchy} from "@/service/api";
+    import Breadcrumb from "@/components/Breadcrumb";
+
+    import Loading from 'vue-loading-overlay';
+
 
 
     export default {
         name: "ViewTopic",
         components: {
-            Pagination
+            Pagination,
+            Breadcrumb,
+            Loading
         },
         data() {
             return {
+                isLoggedIn: localStorage.authentication_token != null,
                 topic_details: {},
                 topic_id: this.$route.params.topic_id,
                 posts: [],
@@ -222,7 +241,14 @@
 
                 editPostId: 0,
                 editPostIndex: 0,
-                postIdToReport: 0
+                postIdToReport: 0,
+
+                disableLikeButton: false,
+                disableUnlikeButton: false,
+
+                breadcrumbElements: [],
+
+                loading_posts: false
             }
         },
 
@@ -233,6 +259,7 @@
 
             addNewPost() {
                 let onSuccessAddPost = (response) => {
+                    response.data.author = JSON.parse(localStorage.selfUser);
                     this.posts.push(response.data);
                     this.input.content = '';
                 };
@@ -299,11 +326,14 @@
             },
 
             loadPosts() {
+                this.loading_posts = true;
                 let onSuccessPosts = (response) => {
+                    this.loading_posts = false;
                     this.posts = response.data.elements;
                     this.total_pages = response.data.totalPages;
                 };
                 let onFailurePosts = (err) => {
+                    this.loading_posts = false;
                     console.log(err);
                 };
                 getPostsByTopicId(this.$route.params.topic_id, this.current_page, onSuccessPosts, onFailurePosts);
@@ -366,13 +396,116 @@
                     }), 1000);
 
                 }
-            }
+            },
+
+            likePost(postId) {
+                if(this.disableLikeButton === false) {
+                    this.disableLikeButton = true;
+                    likePost({
+                        postId: postId
+                    }, (response, err) => {
+                        this.disableLikeButton = false;
+                        if (err == null) {
+                            let selfUserName = JSON.parse(localStorage.selfUser).username;
+                            let selfId = JSON.parse(localStorage.selfUser).id;
+                            for (let post of this.posts) {
+                                if (post.id === postId) {
+                                    post.likeList.push({
+                                        postId: postId,
+                                        userId: selfId,
+                                        userName: selfUserName
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                }
+            },
+
+            unlikePost(postId) {
+                if(this.disableUnlikeButton === false) {
+                    this.disableUnlikeButton = true;
+                    unlikePost({
+                        postId: postId
+                    }, (response, err) => {
+                        this.disableUnlikeButton = false;
+                        if (err == null) {
+                            let selfId = JSON.parse(localStorage.selfUser).id;
+                            for (let i = 0; i < this.posts.length; i++) {
+                                if (this.posts[i].id === postId) {
+                                    let newLikes = [];
+                                    for (let j = 0; j < this.posts[i].likeList.length; j++) {
+                                        if (this.posts[i].likeList[j].userId !== selfId) {
+                                            newLikes.push(this.posts[i].likeList[j]);
+                                        }
+                                    }
+                                    this.posts[i].likeList = newLikes;
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                }
+            },
+
+            alreadyLikedPost(postData) {
+                let selfId = JSON.parse(localStorage.selfUser).id;
+                for(let like of postData.likeList) {
+                    if(like.userId === selfId) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
+            getPostLikes(postData) {
+                let likes = postData.likeList;
+                return likes.length + " likes";
+            },
+
+            markPostAsDeleted(postId) {
+                markPostAsDeleted({
+                    postId: postId
+                }, (response, err) => {
+                    if(err == null) {
+                        this.loadPosts();
+                    }
+                });
+            },
 
         },
 
         created() {
+
+
+
             let onSuccessTopicInformation = (response) => {
                 this.topic_details = response.data;
+
+                document.title = 'View topic ' + this.topic_details.title;
+
+                getCategoryHierarchy({
+                    category_id: this.topic_details.categoryId
+                }, (response, err) => {
+                    if (err == null) {
+                        let currentCategory = response;
+                        let parentCategories = [{
+                            id: -1,
+                            name: this.topic_details.title,
+                        }];
+                        while (currentCategory != null) {
+                            parentCategories.push({
+                                id: currentCategory.id,
+                                name: currentCategory.name,
+                                link: {name: 'category_details', params: {category_id: currentCategory.id}}
+                            });
+                            currentCategory = currentCategory.parentCategory;
+                        }
+                        this.breadcrumbElements = parentCategories.reverse();
+                    }
+                });
+
             };
             let onFailureTopicInformation = (err) => {
                 console.log(err);
@@ -380,14 +513,7 @@
             getTopicById(this.$route.params.topic_id, onSuccessTopicInformation, onFailureTopicInformation);
 
 
-            let onSuccessPosts = (response) => {
-                this.posts = response.data.elements;
-                this.total_pages = response.data.totalPages;
-            };
-            let onFailurePosts = (err) => {
-                console.log(err);
-            };
-            getPostsByTopicId(this.$route.params.topic_id, this.current_page, onSuccessPosts, onFailurePosts);
+            this.loadPosts();
         }
     }
 </script>

@@ -6,6 +6,8 @@
 
         <Breadcrumb></Breadcrumb>
 
+        <!-- https://stackoverflow.com/questions/32741186/how-to-convert-table-based-layout-with-bootstrap-row-and-col-->
+
         <div v-for="parentCategory in categoriesList" :key="parentCategory.id" style="margin-bottom: 20px;">
             <div class="maintitle">{{parentCategory.name}}</div>
             <SubcategoriesDetails
@@ -64,6 +66,8 @@
         },
 
         created() {
+            document.title = 'Forums';
+
             getCategories((response, err) => {
                 if(err == null) {
                     this.categoriesList = response;

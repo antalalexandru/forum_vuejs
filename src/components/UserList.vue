@@ -8,6 +8,15 @@
                 :total_pages="total_pages"
                 :changePage="changePage"
         />
+
+        <div style="text-align: center">
+            <loading :active.sync="loading_page"
+                     :can-cancel="false"
+                     :is-full-page="true"
+                    style="margin: 20px;"
+            ></loading>
+        </div>
+
         <div class="row">
             <div class="col-md-6 col-lg-4 col-xl-3" v-for="user in users" :key="user.id">
                 <div class="card">
@@ -41,24 +50,30 @@
     import {getUsers} from "@/service/api";
     import {getUserGroupFormatted} from "@/service/utils";
     import Pagination from "@/components/Pagination";
+    import Loading from 'vue-loading-overlay';
 
     export default {
         name: "UserList",
         components: {
-            Pagination
+            Pagination,
+            Loading
         },
         data() {
             return {
                 users: [],
                 current_page: this.$route.query.page == null ? 1 : parseInt(this.$route.query.page),
                 total_pages: 1,
+
+                loading_page: true,
             }
         },
         methods: {
             loadUsers() {
+                this.loading_page = true;
                 getUsers({
                     page: this.current_page
                 }, (response, error) => {
+                    this.loading_page = false;
                     if(error == null) {
                         this.users = response.elements;
                         this.total_pages = response.totalPages;
