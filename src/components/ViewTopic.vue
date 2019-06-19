@@ -73,7 +73,7 @@
             <!-- <transition-group name="list" tag="tbody"> -->
             <tbody>
             <tr v-for="(post, key, index) in posts" :key="post.id" style="width: 100%">
-                <td style="width: 250px; text-align: center; vertical-align: top">
+                <td style="width: 200px; text-align: center; vertical-align: top">
                     <div style="font-size: 18px; line-height: 1.8"><router-link :to="{ name: 'user_profile', params: { user_id: post.author.id } }">{{post.author.username}}</router-link></div>
                     <div style="width: 90px; height: 90px; margin: 5px auto; border-radius: 2px;">
                         <router-link :to="{ name: 'user_profile', params: { user_id: post.author.id } }"><div :style="getAvatarStyle(post.author)"></div></router-link>

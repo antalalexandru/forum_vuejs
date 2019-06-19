@@ -4,6 +4,9 @@
         <div class="alert alert-danger" role="alert" v-if="bad_credentials">
             Bad credentials
         </div>
+        <div class="alert alert-danger" role="alert" v-if="account_disabled">
+            Your account is suspended.
+        </div>
 
         <div class="form-group">
             <label for="exampleInputEmail1">Username</label>
@@ -33,6 +36,7 @@
                     password: ""
                 },
                 bad_credentials: false,
+                account_disabled: false,
             }
         },
         methods: {
@@ -53,6 +57,9 @@
                     let request = data.request;
                     if(request.status === 400 && JSON.parse(request.response).error_description === "Bad credentials") {
                         this.bad_credentials = true;
+                    }
+                    if(request.status === 400 && JSON.parse(request.response).error_description === "User is disabled") {
+                        this.account_disabled = true;
                     }
                 };
 

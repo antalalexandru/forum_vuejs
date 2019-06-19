@@ -43,6 +43,10 @@
                 ></loading>
             </div>
 
+            <div v-if="this.topics.length === 0" style="text-align: center; padding: 20px; color: #444">
+                <em>There is no topic in the current category</em>
+            </div>
+
             <table class="table table-striped" style="border: 1px solid #ddd">
                 <tbody>
                 <tr v-for="topic in this.topics" :key="topic.id">
