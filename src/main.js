@@ -4,7 +4,13 @@ import CKEditor from '@ckeditor/ckeditor5-vue';
 import Notifications from 'vue-notification'
 import VueSwal from 'vue-swal';
 import Autocomplete from 'vuejs-auto-complete';
+import VuejsDialog from 'vuejs-dialog';
 
+// include the default style
+import 'vuejs-dialog/dist/vuejs-dialog.min.css';
+
+// Tell Vue to install the plugin.
+Vue.use(VuejsDialog);
 Vue.config.productionTip = false;
 
 import Toasted from 'vue-toasted';

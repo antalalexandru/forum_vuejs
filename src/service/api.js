@@ -338,6 +338,15 @@ export const addNewCategory = (data, handler) => {
     });
 };
 
+export const updateCategory = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/category/' + data.id,
+        method: 'put',
+        handler: handler,
+        data: data
+    });
+};
+
 export const getGroups = (handler) => {
     basicRequest({
         path: '/group',
@@ -354,3 +363,14 @@ export const updateUserGroup = (data, handler) => {
         data: data
     });
 };
+
+export const deleteCategory = (data, handler) => {
+    tryAthenticatedRequest({
+        path: '/category/' + data.category_id,
+        method: 'delete',
+        handler: handler,
+        data: data
+    });
+};
+
+

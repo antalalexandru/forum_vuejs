@@ -9,9 +9,6 @@
             <li class="nav-item">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Users</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -66,9 +63,75 @@
 
                 <draggable class="list-group" v-model="categories" @change="log">
                         <div v-for="category in categories" :key="category.id" class="list-group-item">
+                            <div style="float: right">
+                                <i v-on:click="setCategoryToEdit(category)" data-toggle="modal" data-target=".edit-category-modal" title="Edit this category" class="fas fa-edit" style="color: #3d6594; margin: 4px 5px 0 0; cursor: pointer"></i>
+                                &nbsp;
+                                <i v-on:click="handleDeleteCategory(category)" data-toggle="modal" data-target=".delete-category-modal" title="Remove this category" class="fas fa-times-circle" style="color: #cc0000; margin: 4px 0 0 0; cursor: pointer"></i>
+                            </div>
                             <i class="fas fa-angle-right"></i> &nbsp;<span v-on:click="changeCategory(category.id)" style="cursor: pointer">{{category.name}}</span>
                         </div>
                 </draggable>
+
+                <div class="modal fade delete-category-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete category {{this.categoryToDelete.name}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger" role="alert" v-if="this.categoryToDeleteHasChildCategories">
+                                    Cannot delete this category since it has at least one child category
+                                </div>
+                                <div class="alert alert-warning" role="alert" v-else>
+                                    <p><b>Deletion of this category will lead to removal of all topics and posts inside this category.</b></p>
+                                    <p>Do you want to continue?</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="__deleteCategory" v-if=" ! this.categoryToDeleteHasChildCategories">Delete category</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade edit-category-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit category {{categoryToEdit.name}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Category title</label>
+                                        <input type="text" class="form-control" id="recipient-name" v-model="categoryToEdit.name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="col-form-label">Description</label>
+                                        <textarea class="form-control" id="message-text" v-model="categoryToEdit.description"></textarea>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="categoryToEdit.allowPosting">
+                                        <label class="form-check-label" for="exampleCheck1">Allow posting in this category</label>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="handleUpdateCategory">Update category</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -120,11 +183,12 @@
     import {
         addNewCategory,
         getCategoriesByParent,
-        getCategory,
+        updateCategory,
         getGroups,
         getUsers,
         updateCategoriesRank,
-        updateUserGroup
+        updateUserGroup,
+        deleteCategory
     } from "@/service/api";
     import Pagination from "@/components/Pagination";
     import {getUserGroupFormatted} from "@/service/utils";
@@ -153,6 +217,10 @@
                     description: '',
                     allowPosting: true
                 },
+
+                categoryToEdit: {},
+                categoryToDelete: {},
+                categoryToDeleteHasChildCategories: false,
 
                 categoriesHierarchy: [],
 
@@ -247,6 +315,45 @@
                 });
             },
 
+            handleUpdateCategory: function() {
+                let updatingCategoryToaster = this.$toasted.show("Updating category ...", {
+                    theme: "toasted-primary",
+                    position: "top-center",
+                    duration : 1000,
+                    type: 'info',
+                    iconPack: 'fontawesome',
+                    icon: 'info'
+                });
+                updateCategory({
+                    id: this.categoryToEdit.id,
+                    name: this.categoryToEdit.name,
+                    description: this.categoryToEdit.description,
+                    allowPosting: this.categoryToEdit.allowPosting,
+                }, (response, err) => {
+                    updatingCategoryToaster.goAway(0);
+                    if(err == null) {
+                        this.$toasted.show("Category updated succesfully", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 1000,
+                            type: 'success',
+                            iconPack: 'fontawesome',
+                            icon: 'check'
+                        });
+                        this.loadCategories();
+                    } else {
+                        this.$toasted.show("Error updating category", {
+                            theme: "toasted-primary",
+                            position: "top-center",
+                            duration : 2000,
+                            type: 'error',
+                            iconPack: 'fontawesome',
+                            icon: 'info'
+                        });
+                    }
+                });
+            },
+
             loadUsers: function() {
                 this.loadingUsersPage = true;
                 getUsers({
@@ -278,6 +385,10 @@
             changePage: function(pageNumber) {
                 this.currentUsersPage = pageNumber;
                 this.loadUsers();
+            },
+
+            setCategoryToEdit: function(category) {
+                this.categoryToEdit = category;
             },
 
             handleUpdateUserGroup: function(userId) {
@@ -316,7 +427,50 @@
                         });
                     }
                 });
+            },
 
+            __deleteCategory: function() {
+                deleteCategory({
+                    category_id: this.categoryToDelete.id
+                }, (response, err) => {
+                    if(err == null) {
+                        this.loadCategories();
+                    }
+                });
+            },
+
+            handleDeleteCategory: function(category) {
+
+                this.categoryToDelete = category;
+
+                this.categoryToDeleteHasChildCategories = category.childCategories.length > 0;
+
+                return;
+
+                if(category.childCategories.length > 0) {
+                    this.$toasted.show("Cannot remove category since it has at least one child category", {
+                        theme: "toasted-primary",
+                        position: "top-center",
+                        duration : 3000,
+                        type: 'error',
+                        iconPack: 'fontawesome',
+                        icon: 'info'
+                    });
+                } else {
+                    this.$dialog
+                        .confirm('Deletion of this category will lead to removal of all topics and posts inside this category. Do you want to continue?', {
+                            html: true,
+                            loader: true,
+                            okText: 'Delete category',
+                            cancelText: 'Cancel',
+                        })
+                        .then(function(dialog) {
+                            console.log('Clicked on proceed');
+                        })
+                        .catch(function() {
+                            console.log('Clicked on cancel');
+                        });
+                }
             }
 
         },
@@ -335,5 +489,11 @@
 </script>
 
 <style scoped>
+    .dg-btn--ok {
+        border-color: green;
+    }
 
+    .dg-btn-loader .dg-circle {
+        background-color: green;
+    }
 </style>
